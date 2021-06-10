@@ -84,15 +84,15 @@ namespace Tempest
         int height = 0;
         int channels;
 
-        stbi_uc* imageData;
-        {
-            TEMPEST_PROFILE_SCOPE("WindowsWindow::init loading icon - stbi_load");
-            imageData = stbi_load("Assets/Textures/Ship.png", &width, &height, &channels, 0);
-        }
+        //stbi_uc* imageData;
+        //{
+        //    TEMPEST_PROFILE_SCOPE("WindowsWindow::init loading icon - stbi_load");
+        //    imageData = stbi_load("Assets/Textures/Ship.png", &width, &height, &channels, 0);
+        //}
 
-        GLFWimage icon = { width, height, imageData};
+        //GLFWimage icon = { width, height, imageData};
 
-        glfwSetWindowIcon(_window, 1, &icon);
+        //glfwSetWindowIcon(_window, 1, &icon);
 
         glfwSetWindowUserPointer(_window, &_windowData);
         setVSync(true);

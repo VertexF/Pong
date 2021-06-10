@@ -21,19 +21,9 @@ public:
     virtual void onEvent(Tempest::Event& e) override;
     virtual void onImGuiRender() override;
 private:
-    bool onKeyPressed(Tempest::PressedKeyEvent& e);
-private:
     glm::vec4 _squareColour;
 
-    uint32_t _spellSoundBuffer = 0;
-    uint32_t _magicFailSoundBuffer = 0;
-
-    Tempest::ref<Tempest::SoundDevice> _soundDevice;
-    Tempest::ref<Tempest::SoundBuffer> _soundBuffer;
-    Tempest::ref<Tempest::SoundSource> _mySource;
-
     Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
-    Tempest::scope<Level> _level;
 };
 
 
