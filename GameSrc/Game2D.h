@@ -7,6 +7,8 @@
 #include "Tempest/Events/Event.h"
 #include "Tempest/Events/KeyEvents.h"
 
+#include "RtAudio.h"
+
 class Level;
 
 class Game2D : public Tempest::Layer
@@ -24,6 +26,7 @@ private:
     glm::vec4 _squareColour;
 
     Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
+    Tempest::scope<::RtAudio> _rtAudio;
 };
 
 

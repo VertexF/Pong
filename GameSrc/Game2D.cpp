@@ -7,6 +7,7 @@
 Game2D::Game2D() : Layer("Game"), _squareColour({ 0.8f, 0.3f, 0.2f, 1.f })
 {
     _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
+    _rtAudio = std::make_unique<::RtAudio>();
 }
 
 void Game2D::onAttach()
