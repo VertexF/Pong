@@ -8,26 +8,29 @@
 #include "Tempest/Events/KeyEvents.h"
 
 #include "RtAudio.h"
+#include "TextTest.h"
 
-class Level;
-
-class Game2D : public Tempest::Layer
+namespace game
 {
-public:
-    Game2D();
-    virtual ~Game2D() = default;
+    class Game2D : public Tempest::Layer
+    {
+    public:
+        Game2D();
+        virtual ~Game2D() = default;
 
-    virtual void onAttach() override;
-    virtual void onDetach() override;
-    virtual void onUpdate(Tempest::TimeStep timeStep) override;
-    virtual void onEvent(Tempest::Event& e) override;
-    virtual void onImGuiRender() override;
-private:
-    glm::vec4 _squareColour;
+        virtual void onAttach() override;
+        virtual void onDetach() override;
+        virtual void onUpdate(Tempest::TimeStep timeStep) override;
+        virtual void onEvent(Tempest::Event& e) override;
+        virtual void onImGuiRender() override;
+    private:
+        glm::vec4 _squareColour;
 
-    Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
-    Tempest::scope<::RtAudio> _rtAudio;
-};
+        Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
+        Tempest::scope<::RtAudio> _rtAudio;
 
+        Tempest::scope<TextTest> _testText;
+    };
+}
 
 #endif //!GAME_2D_HDR

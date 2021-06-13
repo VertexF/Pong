@@ -4,57 +4,63 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
-Game2D::Game2D() : Layer("Game"), _squareColour({ 0.8f, 0.3f, 0.2f, 1.f })
+namespace game
 {
-    _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
-    _rtAudio = std::make_unique<::RtAudio>();
-}
+    Game2D::Game2D() : Layer("Game"), _squareColour({ 0.8f, 0.3f, 0.2f, 1.f })
+    {
+        _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
+        _rtAudio = std::make_unique<::RtAudio>();
 
-void Game2D::onAttach()
-{
-    TEMPEST_PROFILE_FUNCTION();
+        _testText = std::make_unique<TextTest>();
+        _testText->printTextToConsole("He", 10.f);
+    }
 
-    _cameraController->setZoomLevel(5.f);
-}
+    void Game2D::onAttach()
+    {
+        TEMPEST_PROFILE_FUNCTION();
 
-void Game2D::onDetach()
-{
-    TEMPEST_PROFILE_FUNCTION();
-}
+        _cameraController->setZoomLevel(5.f);
+    }
 
-void Game2D::onUpdate(Tempest::TimeStep timeStep)
-{
-    TEMPEST_PROFILE_FUNCTION();
+    void Game2D::onDetach()
+    {
+        TEMPEST_PROFILE_FUNCTION();
+    }
 
-    _cameraController->onUpdate(timeStep);
+    void Game2D::onUpdate(Tempest::TimeStep timeStep)
+    {
+        TEMPEST_PROFILE_FUNCTION();
 
-    Tempest::Renderer2D::resetStats();
+        _cameraController->onUpdate(timeStep);
 
-    Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
-    Tempest::RendererCommands::clear();
+        Tempest::Renderer2D::resetStats();
 
-    Tempest::Renderer2D::beginScene(_cameraController->getCamera());
-    Tempest::Renderer2D::endScene();
-}
+        Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
+        Tempest::RendererCommands::clear();
 
-void Game2D::onEvent(Tempest::Event& e)
-{
-    _cameraController->onEvent(e);
-}
+        Tempest::Renderer2D::beginScene(_cameraController->getCamera());
+        Tempest::Renderer2D::endScene();
+    }
 
-void Game2D::onImGuiRender()
-{
-    TEMPEST_PROFILE_FUNCTION();
-    ImGui::Begin("Settings");
+    void Game2D::onEvent(Tempest::Event& e)
+    {
+        _cameraController->onEvent(e);
+    }
 
-    auto stats = Tempest::Renderer2D::getStats();
-    ImGui::Text("Renderer2D Stats:");
-    ImGui::Text("Draw Calls: %d", stats.drawCalls);
-    ImGui::Text("Quads: %d", stats.quadCount);
-    ImGui::Text("Vertices: %d", stats.getTotalVertices());
-    ImGui::Text("Indices: %d", stats.getTotalIndices());
+    void Game2D::onImGuiRender()
+    {
+        TEMPEST_PROFILE_FUNCTION();
+        ImGui::Begin("Settings");
 
-    ImGui::ColorEdit4("Square Colour Picker", glm::value_ptr(_squareColour));
+        auto stats = Tempest::Renderer2D::getStats();
+        ImGui::Text("Renderer2D Stats:");
+        ImGui::Text("Draw Calls: %d", stats.drawCalls);
+        ImGui::Text("Quads: %d", stats.quadCount);
+        ImGui::Text("Vertices: %d", stats.getTotalVertices());
+        ImGui::Text("Indices: %d", stats.getTotalIndices());
 
-    ImGui::End();
+        ImGui::ColorEdit4("Square Colour Picker", glm::value_ptr(_squareColour));
+
+        ImGui::End();
+    }
 }
