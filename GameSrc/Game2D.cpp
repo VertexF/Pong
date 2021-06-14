@@ -12,7 +12,6 @@ namespace game
         _rtAudio = std::make_unique<::RtAudio>();
 
         _testText = std::make_unique<TextTest>();
-        _testText->printTextToConsole("He", 10.f);
     }
 
     void Game2D::onAttach()
@@ -39,6 +38,7 @@ namespace game
         Tempest::RendererCommands::clear();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
+        _testText->onRender();
         Tempest::Renderer2D::endScene();
     }
 

@@ -28,6 +28,7 @@ namespace Tempest
         virtual ~Texture2D() = default;
         static ref<Texture2D> create(const std::string &path);
         static ref<Texture2D> create(uint32_t width, uint32_t height);
+        static ref<Texture2D> create(uint32_t width, uint32_t height, int channel);
     };
 }
 
