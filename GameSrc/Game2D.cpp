@@ -38,7 +38,7 @@ namespace game
         Tempest::RendererCommands::clear();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
-        _testText->onRender();
+        _testText->displayText(0.f, 0.f, "Pong");
         Tempest::Renderer2D::endScene();
     }
 

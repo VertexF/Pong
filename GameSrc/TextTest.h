@@ -26,6 +26,7 @@ namespace game
         void printTextToConsole(std::string text, float charSize);
 
         void onRender();
+        void displayText(float x, float y, char* text);
     private:
         void init();
         void TTFtoBitmap();

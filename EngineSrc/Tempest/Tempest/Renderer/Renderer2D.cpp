@@ -459,6 +459,62 @@ namespace Tempest
         renderer2DData.stats.quadCount++;
     }
 
+    void Renderer2D::drawText(const glm::vec2& position, const glm::vec2& size, const stbtt_aligned_quad& coords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
+    {
+        drawText(glm::vec3(position.x, position.y, 0.f), size, coords, texture, tileFactor, tint);
+    }
+
+    void Renderer2D::drawText(const glm::vec3& position, const glm::vec2& size, const stbtt_aligned_quad& coords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        glm::vec2 textureCoords[] = {
+                { coords.s0, coords.t1,},
+                { coords.s1, coords.t1 },
+                { coords.s1, coords.t0 },
+                { coords.s0, coords.t0 }
+        };
+
+        if (renderer2DData.quadIndexCount >= Renderer2DData::maxIndices)
+        {
+            flushAndReset();
+        }
+
+        int textureIndex = 0;
+
+        for (uint32_t i = 1; i < renderer2DData.textureSlotIndex; ++i)
+        {
+            if (*renderer2DData.textureSlots[i].get() == *texture.get())
+            {
+                textureIndex = i;
+            }
+        }
+
+        if (textureIndex == 0)
+        {
+            textureIndex = renderer2DData.textureSlotIndex;
+            renderer2DData.textureSlots[renderer2DData.textureSlotIndex] = texture;
+            renderer2DData.textureSlotIndex++;
+        }
+
+        glm::mat4x4 transform = glm::translate(glm::mat4x4(1.f), position) *
+            glm::scale(glm::mat4x4(1.f), { size.x, size.y, 1.f });
+
+        for (uint32_t i = 0; i < 4; ++i)
+        {
+            renderer2DData.quadVertexBufferPtr->position = transform * renderer2DData.quadVertexPositions[i];
+            renderer2DData.quadVertexBufferPtr->colour = tint;
+            renderer2DData.quadVertexBufferPtr->texCoord = textureCoords[i];
+            renderer2DData.quadVertexBufferPtr->tilingFactor = tileFactor;
+            renderer2DData.quadVertexBufferPtr->textureIndex = textureIndex;
+            renderer2DData.quadVertexBufferPtr++;
+        }
+
+        renderer2DData.quadIndexCount += 6;
+
+        renderer2DData.stats.quadCount++;
+    }
+
     Renderer2D::Statistics Renderer2D::getStats() 
     {
         return renderer2DData.stats;
