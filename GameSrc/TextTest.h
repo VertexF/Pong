@@ -2,6 +2,8 @@
 #define TEXT_TEST_HDR
 
 #include "stb_truetype.h"
+#include "stb_rect_pack.h"
+
 #include <string>
 
 #include "Tempest/Renderer/Texture.h"
@@ -19,7 +21,7 @@ namespace game
     class TextTest 
     {
     public:
-        TextTest();
+        TextTest(float fontSize);
         ~TextTest();
 
         //TODO : remove once you have built the OpenGL API structure for text.
@@ -31,16 +33,18 @@ namespace game
         void init();
         void TTFtoBitmap();
 
-        stbtt_fontinfo _fontInfo;
-
         unsigned char* _ttfBuffer;
-        unsigned char _characterBuffer[BITMAP_BUFFER];
-        stbtt_bakedchar _asciiBuffer[ASCII_BUFFER];
+        stbtt_packedchar* _asciiBuffer;
 
         int _charWidth = 0;
         int _charHeight = 0;
 
+        uint32_t _textureSize = 128;
+        float _fontSize;
+
         Tempest::ref<Tempest::Texture2D> _textTexture;
+
+        Tempest::scope<stbtt_fontinfo> _fontInfo;
     };
 }
 

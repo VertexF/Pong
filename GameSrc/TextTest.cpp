@@ -7,10 +7,8 @@
 
 namespace game 
 {
-    TextTest::TextTest()
+    TextTest::TextTest(float fontSize) : _fontSize(fontSize)
     {
-        _textTexture = Tempest::Texture2D::create(BITMAP_CHAR, BITMAP_CHAR, 1);
-
         init();
         TTFtoBitmap();
     }
@@ -25,9 +23,8 @@ namespace game
 
     void TextTest::init() 
     {
-        FILE* ttfFile = fopen("Assets\\Fonts\\ShortBaby.ttf", "rb");
-
-        if (ttfFile != nullptr)
+        FILE* ttfFile = nullptr;
+        if (fopen_s(&ttfFile, "Assets\\Fonts\\OpenSans-Regular.ttf", "rb") == 0)
         {
             fseek(ttfFile, 0, SEEK_END);
             long bufferSize = ftell(ttfFile); /* how long is the file ? */
@@ -57,15 +54,48 @@ namespace game
 
     void TextTest::TTFtoBitmap() 
     {
-        //We are restart afew, I think we might need to work out how wide and high the TTF characters, but for now we actually data.
-        stbtt_BakeFontBitmap(_ttfBuffer, 0, 32.f, _characterBuffer, BITMAP_CHAR, BITMAP_CHAR, 32, ASCII_BUFFER, _asciiBuffer);
+        _fontInfo = std::make_unique<stbtt_fontinfo>();
+        _asciiBuffer = new stbtt_packedchar[ASCII_BUFFER];
 
-        if (_characterBuffer == nullptr)
+        if (stbtt_InitFont(_fontInfo.get(), _ttfBuffer, 0) == 0)
         {
-            TEMPEST_CRITICAL("Could not bake to bitmap font.");
+            delete[] _ttfBuffer;
+            TEMPEST_ERROR("Failed to started up STB_TTF");
         }
 
-        _textTexture->setData(_characterBuffer, sizeof(_characterBuffer));
+        // fill bitmap atlas with packed characters
+        unsigned char* bitmap = nullptr;
+        while (true) 
+        {
+            bitmap = new unsigned char[_textureSize * _textureSize];
+            stbtt_pack_context packContext;
+            stbtt_PackBegin(&packContext, bitmap, _textureSize, _textureSize, 0, 1, 0);
+            stbtt_PackSetOversampling(&packContext, 1, 1);
+
+            if (stbtt_PackFontRange(&packContext, _ttfBuffer, 0, _fontSize, 32, ASCII_BUFFER, _asciiBuffer) == false)
+            {
+                delete[] bitmap;
+                stbtt_PackEnd(&packContext);
+                _textureSize *= 2;
+            }
+            else 
+            {
+                stbtt_PackEnd(&packContext);
+                break;
+            }
+        }
+
+        //Remember the _textureSize * _textureSize is the texture size and sizeof(uint32_t) is the channel RGBA
+        uint32_t* pixels = new uint32_t[_textureSize * _textureSize * sizeof(uint32_t)];
+
+        for (int i = 0; i < _textureSize * _textureSize; ++i)
+        {
+            pixels[i] = 0xFFFFFF00 + bitmap[i];
+        }
+        
+        _textTexture = Tempest::Texture2D::create(_textureSize, _textureSize);
+        _textTexture->setData(pixels, (_textureSize * _textureSize * sizeof(uint32_t)));
+
     }
 
     void TextTest::onRender() 
@@ -75,18 +105,22 @@ namespace game
 
     void TextTest::displayText(float x, float y, char* text)
     {
-        while (*text)
+        for(int i = 0; text[i]; ++i)
         {
-            if (*text >= 32 && *text < 128)
+            if (text[i] >= 32 && text[i] < 128)
             {
-                stbtt_aligned_quad textureCoords;
-                stbtt_GetBakedQuad(_asciiBuffer, BITMAP_CHAR, BITMAP_CHAR, *text - 32, &x, &y, &textureCoords, 1);
+                //stbtt_aligned_quad textureCoords;
+                //stbtt_GetBakedQuad(_asciiBuffer[text[i] - 32], BITMAP_CHAR, BITMAP_CHAR, *text - 32, &x, &y, &textureCoords, 1);
+                stbtt_packedchar* info = &_asciiBuffer[text[i] - 32];
 
-                Tempest::Renderer2D::drawText({ x - 64.f, y }, { 1.f, 1.f }, textureCoords, _textTexture);
+                glm::vec4 texCoords = { info->x0, info->y0, info->x1, info->y1 };
+                //SDL_Rect dst_rect = { x + info->xoff, y + info->yoff, info->x1 - info->x0, info->y1 - info->y0 };
+
+                Tempest::Renderer2D::drawText({ x + info->xoff, y + info->yoff }, { 1.f, 1.f }, texCoords, _textTexture);
             }
-
-            ++text;
         }
+
+        Tempest::Renderer2D::drawQuad({ x, y }, { 1.f, 1.f }, _textTexture);
     }
 
     void TextTest::printTextToConsole(std::string text, float charSize)
@@ -106,13 +140,13 @@ namespace game
 
             int offsetIndexValue = stbtt_GetFontOffsetForIndex(_ttfBuffer, 0);
 
-            if (stbtt_InitFont(&_fontInfo, _ttfBuffer, offsetIndexValue) == 1)
+            if (stbtt_InitFont(_fontInfo.get(), _ttfBuffer, offsetIndexValue) == 1)
             {
-                float ttfScale = stbtt_ScaleForPixelHeight(&_fontInfo, charSize);
+                float ttfScale = stbtt_ScaleForPixelHeight(_fontInfo.get(), charSize);
                 for (int textIter = 0; textIter < text.size(); ++textIter)
                 {
                     unsigned short currectCaracter = text.at(textIter);
-                    unsigned char* bitmap = stbtt_GetCodepointBitmap(&_fontInfo, 0, ttfScale, currectCaracter, &_charWidth, &_charHeight, 0, 0);
+                    unsigned char* bitmap = stbtt_GetCodepointBitmap(_fontInfo.get(), 0, ttfScale, currectCaracter, &_charWidth, &_charHeight, 0, 0);
 
                     for (int j = 0; j < _charHeight; ++j)
                     {

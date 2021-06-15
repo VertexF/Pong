@@ -11,7 +11,7 @@ namespace game
         _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
         _rtAudio = std::make_unique<::RtAudio>();
 
-        _testText = std::make_unique<TextTest>();
+        _testText = std::make_unique<TextTest>(64.f);
     }
 
     void Game2D::onAttach()
