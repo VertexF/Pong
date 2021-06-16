@@ -29,6 +29,8 @@
 #include "Tempest/Renderer/SubTexture2D.h"
 #include "Tempest/Renderer/Renderer2D.h"
 
+#include "Tempest/Renderer/TextRenderer.h"
+
 //Effects
 #include "Tempest/Renderer/ParticalSystem.h"
 

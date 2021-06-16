@@ -8,7 +8,6 @@
 #include "Tempest/Events/KeyEvents.h"
 
 #include "RtAudio.h"
-#include "TextTest.h"
 
 namespace game
 {
@@ -29,7 +28,7 @@ namespace game
         Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
         Tempest::scope<::RtAudio> _rtAudio;
 
-        Tempest::scope<TextTest> _testText;
+        Tempest::scope<Tempest::TextRenderer> _testText;
     };
 }
 

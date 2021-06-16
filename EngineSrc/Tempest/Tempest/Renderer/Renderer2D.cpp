@@ -41,6 +41,7 @@ namespace Tempest
         //Texture slot 0 is the white 1 by 1 texture we have at the beginning.
 
         glm::vec4 quadVertexPositions[4];
+        glm::vec4 textQuadVertexPositions[4];
 
         Renderer2D::Statistics stats;
     };
@@ -469,7 +470,7 @@ namespace Tempest
         TEMPEST_PROFILE_FUNCTION();
 
         glm::vec2 textureCoords[] = {
-                { texCoords.s0, texCoords.t1,},
+                { texCoords.s0, texCoords.t1 },
                 { texCoords.s1, texCoords.t1 },
                 { texCoords.s1, texCoords.t0 },
                 { texCoords.s0, texCoords.t0 }
@@ -500,9 +501,14 @@ namespace Tempest
         glm::mat4x4 transform = glm::translate(glm::mat4x4(1.f), position) *
             glm::scale(glm::mat4x4(1.f), { size.x, size.y, 1.f });
 
+        renderer2DData.textQuadVertexPositions[0] = { texCoords.x0, -texCoords.y1, 0.f, 1.f };
+        renderer2DData.textQuadVertexPositions[1] = { texCoords.x1, -texCoords.y1, 0.f, 1.f };
+        renderer2DData.textQuadVertexPositions[2] = { texCoords.x1, -texCoords.y0, 0.f, 1.f };
+        renderer2DData.textQuadVertexPositions[3] = { texCoords.x0, -texCoords.y0, 0.f, 1.f };
+
         for (uint32_t i = 0; i < 4; ++i)
         {
-            renderer2DData.quadVertexBufferPtr->position = transform * renderer2DData.quadVertexPositions[i];
+            renderer2DData.quadVertexBufferPtr->position = transform * renderer2DData.textQuadVertexPositions[i];
             renderer2DData.quadVertexBufferPtr->colour = tint;
             renderer2DData.quadVertexBufferPtr->texCoord = textureCoords[i];
             renderer2DData.quadVertexBufferPtr->tilingFactor = tileFactor;
