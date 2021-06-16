@@ -459,20 +459,20 @@ namespace Tempest
         renderer2DData.stats.quadCount++;
     }
 
-    void Renderer2D::drawText(const glm::vec2& position, const glm::vec2& size, const glm::vec4& texCoords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
+    void Renderer2D::drawText(const glm::vec2& position, const glm::vec2& size, const stbtt_aligned_quad& texCoords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
     {
         drawText(glm::vec3(position.x, position.y, 0.f), size, texCoords, texture, tileFactor, tint);
     }
 
-    void Renderer2D::drawText(const glm::vec3& position, const glm::vec2& size, const glm::vec4& texCoords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
+    void Renderer2D::drawText(const glm::vec3& position, const glm::vec2& size, const stbtt_aligned_quad& texCoords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
     {
         TEMPEST_PROFILE_FUNCTION();
 
         glm::vec2 textureCoords[] = {
-                { texCoords.x, texCoords.w,},
-                { texCoords.y, texCoords.w },
-                { texCoords.y, texCoords.z },
-                { texCoords.x, texCoords.z }
+                { texCoords.s0, texCoords.t1,},
+                { texCoords.s1, texCoords.t1 },
+                { texCoords.s1, texCoords.t0 },
+                { texCoords.s0, texCoords.t0 }
         };
 
         if (renderer2DData.quadIndexCount >= Renderer2DData::maxIndices)

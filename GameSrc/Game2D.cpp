@@ -11,7 +11,7 @@ namespace game
         _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
         _rtAudio = std::make_unique<::RtAudio>();
 
-        _testText = std::make_unique<TextTest>(64.f);
+        _testText = std::make_unique<TextTest>(128.f);
     }
 
     void Game2D::onAttach()
@@ -38,7 +38,7 @@ namespace game
         Tempest::RendererCommands::clear();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
-        _testText->displayText(0.f, 0.f, "Pong");
+        _testText->displayText(0.f, 0.f, "Pongy");
         Tempest::Renderer2D::endScene();
     }
 

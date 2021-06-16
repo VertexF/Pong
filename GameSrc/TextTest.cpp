@@ -90,7 +90,9 @@ namespace game
 
         for (int i = 0; i < _textureSize * _textureSize; ++i)
         {
-            pixels[i] = 0xFFFFFF00 + bitmap[i];
+            pixels[i] = bitmap[i];
+            pixels[i] = pixels[i] << 24;
+            pixels[i] += 0xFFFFFF;
         }
         
         _textTexture = Tempest::Texture2D::create(_textureSize, _textureSize);
@@ -105,22 +107,21 @@ namespace game
 
     void TextTest::displayText(float x, float y, char* text)
     {
-        for(int i = 0; text[i]; ++i)
+        float offsetX = 0;
+        float offsetY = 0;
+        while(*text)
         {
-            if (text[i] >= 32 && text[i] < 128)
+            if (*text >= 32 && *text < 128)
             {
-                //stbtt_aligned_quad textureCoords;
-                //stbtt_GetBakedQuad(_asciiBuffer[text[i] - 32], BITMAP_CHAR, BITMAP_CHAR, *text - 32, &x, &y, &textureCoords, 1);
-                stbtt_packedchar* info = &_asciiBuffer[text[i] - 32];
+                stbtt_aligned_quad textureCoords;
+                stbtt_GetPackedQuad(_asciiBuffer, _textureSize, _textureSize, *text - 32, &x, &y, &textureCoords, 1);
+                //stbtt_packedchar* info = &_asciiBuffer[text[i] - 32];
 
-                glm::vec4 texCoords = { info->x0, info->y0, info->x1, info->y1 };
-                //SDL_Rect dst_rect = { x + info->xoff, y + info->yoff, info->x1 - info->x0, info->y1 - info->y0 };
-
-                Tempest::Renderer2D::drawText({ x + info->xoff, y + info->yoff }, { 1.f, 1.f }, texCoords, _textTexture);
+                Tempest::Renderer2D::drawText({ offsetX, 0.f }, { 1.f, 1.f }, textureCoords, _textTexture, 1.f, {0.5f, 0.2f, 0.8f, 1.f});
+                offsetX += 1.01f;
             }
+            ++text;
         }
-
-        Tempest::Renderer2D::drawQuad({ x, y }, { 1.f, 1.f }, _textTexture);
     }
 
     void TextTest::printTextToConsole(std::string text, float charSize)

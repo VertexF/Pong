@@ -39,8 +39,8 @@ namespace Tempest
         static void drawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ref<SubTexture2D> subTexture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
         static void drawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ref<SubTexture2D> subTexture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
 
-        static void drawText(const glm::vec2& position, const glm::vec2& size, const glm::vec4& texCoords, const ref<Texture2D> texture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
-        static void drawText(const glm::vec3& position, const glm::vec2& size, const glm::vec4& texCoords, const ref<Texture2D> texture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
+        static void drawText(const glm::vec2& position, const glm::vec2& size, const stbtt_aligned_quad& texCoords, const ref<Texture2D> texture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
+        static void drawText(const glm::vec3& position, const glm::vec2& size, const stbtt_aligned_quad& texCoords, const ref<Texture2D> texture, float tileFactor = 1.f, const glm::vec4& tint = glm::vec4(1.f));
 
         struct Statistics
         {

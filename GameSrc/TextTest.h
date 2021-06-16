@@ -39,7 +39,7 @@ namespace game
         int _charWidth = 0;
         int _charHeight = 0;
 
-        uint32_t _textureSize = 128;
+        uint32_t _textureSize = 32;
         float _fontSize;
 
         Tempest::ref<Tempest::Texture2D> _textTexture;
