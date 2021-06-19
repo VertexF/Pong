@@ -21,13 +21,10 @@ namespace Tempest
 
     uint32_t OpenALSoundBuffer::addSoundEffect(const char* filename)
     {
-        ALenum err, format;
-        ALuint buffer;
-        SNDFILE* sndfile;
-        SF_INFO sfinfo;
-        short* membuf;
-        sf_count_t num_frames;
-        ALsizei num_bytes;
+        SNDFILE* sndfile = nullptr;
+        SF_INFO sfinfo = {0};
+        short* membuf = nullptr;
+        sf_count_t numFrames;
 
         sfinfo.samplerate = 44;
         sfinfo.channels = 2;
@@ -43,14 +40,14 @@ namespace Tempest
             TEMPEST_CORE_ASSERT(false, "Could not open audio in");
         }
 
-        if (sfinfo.frames < 1 || sfinfo.frames >(sf_count_t)(INT_MAX / sizeof(short)) / sfinfo.channels)
+        if (sfinfo.frames < 1 || sfinfo.frames > static_cast<sf_count_t>(INT_MAX / sizeof(short) / sfinfo.channels))
         {
             TEMPEST_CRITICAL("Bad sample count in {0} : {1}", filename, sfinfo.frames);
             sf_close(sndfile);
         }
 
         /* Get the sound format, and figure out the OpenAL format */
-        format = AL_NONE;
+        ALenum format = AL_NONE;
         switch (sfinfo.channels)
         {
         case 1:
@@ -80,30 +77,30 @@ namespace Tempest
         }
 
         /* Decode the whole audio file to a buffer. */
-        membuf = static_cast<short*>(malloc((size_t)(sfinfo.frames * sfinfo.channels) * sizeof(short)));
+        membuf = new short[sfinfo.frames * sfinfo.channels * sizeof(short)];
 
-        num_frames = sf_readf_short(sndfile, membuf, sfinfo.frames);
-        if (num_frames < 1)
+        numFrames = sf_readf_short(sndfile, membuf, sfinfo.frames);
+        if (numFrames < 1)
         {
-            free(membuf);
+            delete[] membuf;
             sf_close(sndfile);
-            TEMPEST_CRITICAL("Failed to read samples in {0} : {1}", filename, num_frames);
+            TEMPEST_CRITICAL("Failed to read samples in {0} : {1}", filename, numFrames);
         }
 
-        num_bytes = (ALsizei)(num_frames * sfinfo.channels) * (ALsizei)sizeof(short);
+        ALsizei numBytes = static_cast<ALsizei>(numFrames * sfinfo.channels * sizeof(short));
 
         /* Buffer the audio data into a new buffer object, then free the data and
          * close the file.
          */
-        buffer = 0;
+        ALuint buffer = 0;
         alGenBuffers(1, &buffer);
-        alBufferData(buffer, format, membuf, num_bytes, sfinfo.samplerate);
+        alBufferData(buffer, format, membuf, numBytes, sfinfo.samplerate);
 
-        free(membuf);
+        delete[] membuf;
         sf_close(sndfile);
 
         /* Check if an error occured, and clean up if so. */
-        err = alGetError();
+        ALenum err = alGetError();
         if (err != AL_NO_ERROR)
         {
             TEMPEST_CRITICAL("OpenAL Error: {0}", alGetString(err));
