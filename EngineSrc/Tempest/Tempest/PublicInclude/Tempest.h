@@ -31,6 +31,11 @@
 
 #include "Tempest/Renderer/TextRenderer.h"
 
+//Audio
+#include "Tempest/Audio/OpenALSoundDevice.h"
+#include "Tempest/Audio/SoundSource.h"
+#include "Tempest/Audio/SoundBuffer.h"
+
 //Effects
 #include "Tempest/Renderer/ParticalSystem.h"
 
