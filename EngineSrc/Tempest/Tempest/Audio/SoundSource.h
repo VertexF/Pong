@@ -24,7 +24,7 @@ namespace Tempest
         bool _loopSound = false;
         uint32_t _buffer = 0;
 
-        int32_t _stateFlag;
+        int32_t _stateFlag = AL_INITIAL;
     };
 }
 

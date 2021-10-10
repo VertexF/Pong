@@ -7,7 +7,7 @@
 
 namespace Tempest 
 {
-    SoundSource::SoundSource() 
+    SoundSource::SoundSource()
     {
         alGenSources(1, &_source);
 

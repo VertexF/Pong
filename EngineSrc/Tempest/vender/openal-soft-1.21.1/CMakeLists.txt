@@ -27,7 +27,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     endif()
 endif()
 
-project(OPENAL)
+project(OpenAL)
 
 if(COMMAND CMAKE_POLICY)
     cmake_policy(SET CMP0003 NEW)
@@ -1608,5 +1608,5 @@ if(EXTRA_INSTALLS)
 endif()
 
 if(MSVC)
-    set_property(TARGET OPENAL PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET ${IMPL_TARGET} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()

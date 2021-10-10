@@ -7,8 +7,6 @@
 #include "Tempest/Events/Event.h"
 #include "Tempest/Events/KeyEvents.h"
 
-#include "AudioTest.h"
-
 namespace game
 {
     class Game2D : public Tempest::Layer
@@ -24,6 +22,7 @@ namespace game
         virtual void onImGuiRender() override;
     private:
         bool onKeyPressed(Tempest::PressedKeyEvent& e);
+        bool onKeyReleased(Tempest::ReleasedKeyEvent& e);
     private:
         glm::vec4 _squareColour;
 

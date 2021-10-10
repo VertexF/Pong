@@ -37,14 +37,13 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->onUpdate(timeStep);
-
         Tempest::Renderer2D::resetStats();
 
         Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
         Tempest::RendererCommands::clear();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
-        _testText->displayText({ 0.f, 4.0f }, { 1.f, 1.f }, _squareColour, "Pong!");
+        _testText->displayText({ -2.f, 4.0f }, { 1.f, 1.f }, _squareColour, "Tech Demo!");
         Tempest::Renderer2D::endScene();
     }
 
@@ -54,6 +53,7 @@ namespace game
 
         Tempest::EventDispatcher dispatcher(e);
         dispatcher.dispatch<Tempest::PressedKeyEvent>(std::bind(&Game2D::onKeyPressed, this, std::placeholders::_1));
+        dispatcher.dispatch<Tempest::ReleasedKeyEvent>(std::bind(&Game2D::onKeyReleased, this, std::placeholders::_1));
     }
 
     void Game2D::onImGuiRender()
@@ -75,15 +75,21 @@ namespace game
 
     bool Game2D::onKeyPressed(Tempest::PressedKeyEvent& e)
     {
-        if (e.getKeyCode() == TEMP_KEY_1)
+        switch (e.getKeyCode()) 
         {
+        case TEMP_KEY_1:
             _mySource->play(_spellSoundBuffer);
-        }
-        else if (e.getKeyCode() == TEMP_KEY_2)
-        {
+            break;
+        case TEMP_KEY_2:
             _mySource->play(_magicFailSoundBuffer);
+            break;
         }
 
+        return false;
+    }
+
+    bool Game2D::onKeyReleased(Tempest::ReleasedKeyEvent& e) 
+    {
         return false;
     }
 
