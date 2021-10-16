@@ -9,9 +9,11 @@ namespace game
     class Vehicle : public Tempest::MovingEntity
     {
     public:
-        Vehicle(Tempest::scope<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
+        Vehicle(Tempest::ref<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
             const glm::vec3& velocity, float mass, float maxForce, float maxSpeed, float maxTurnRate,
             float scale);
+
+        virtual ~Vehicle() = default;
 
         void loadAssets();
         virtual void onUpdate(Tempest::TimeStep ts) override;
@@ -29,8 +31,6 @@ namespace game
         Vehicle(Vehicle&& other) noexcept = default; 
         Vehicle& operator=(const Vehicle& other) = default;
         Vehicle& operator=(Vehicle&& other) noexcept = default;
-
-        virtual ~Vehicle() = default;
 
         //NOTE! Smooth steering behavior hasn't been written.
 

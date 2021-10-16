@@ -1,3 +1,4 @@
+#include "PreComp.h"
 #include "Vehicle.h"
 
 #include <glm/gtx/norm.hpp>
@@ -6,7 +7,7 @@
 
 namespace game 
 {
-    Vehicle::Vehicle(Tempest::scope<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
+    Vehicle::Vehicle(Tempest::ref<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
         const glm::vec3& velocity, float mass, float maxForce, float maxSpeed, float maxTurnRate,
         float scale) : 
         Tempest::MovingEntity(pos, scale, velocity, maxSpeed, glm::vec3(glm::sin(rotation), -glm::cos(rotation), 1.f),
@@ -16,18 +17,25 @@ namespace game
 
     void Vehicle::loadAssets() 
     {
+        _shipTexture = Tempest::Texture2D::create("Assets/Textures/Triangle.png");
     }
 
     void Vehicle::onUpdate(Tempest::TimeStep ts) 
     {
-        intergrate(ts);
         //NOTE TODO: Add extra update code when needed.
+
+        if (Tempest::Input::isMouseButtonPressed(0)) 
+        {
+            rotateToFaceHeading(glm::vec3(Tempest::Input::getMousePosition(), 1.f));
+        }
+
+        intergrate(ts);
     }
 
     void Vehicle::onRender() 
     {
         //Interface notes: I don't think the moving enitity should worry about scale because doesn't affect the maths of motion.
-        Tempest::Renderer2D::drawRotatedQuad({ _pos.x, _pos.y, -0.5f }, { 1.f, 1.3f }, glm::radians(_), _shipTexture);
+        Tempest::Renderer2D::drawRotatedQuad(getTransform(), getScale(), _shipTexture);
     }
 
     void Vehicle::onImGuiRender() 
@@ -40,6 +48,7 @@ namespace game
 
     bool Vehicle::handleMessage(const Tempest::Telegram& tele) 
     {
+        return false;
     }
 
     void Vehicle::write(std::ofstream outStream) 

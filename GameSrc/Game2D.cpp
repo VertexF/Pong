@@ -15,6 +15,14 @@ namespace game
         _soundDevice = Tempest::SoundDevice::create();
         _soundBuffer = Tempest::SoundBuffer::create();
         _mySource = std::make_shared<Tempest::SoundSource>();
+
+        _gameWorld = std::make_shared<Tempest::GameWorld>();
+
+        //Tempest::scope<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
+        //    const glm::vec3& velocity, float mass, float maxForce, float maxSpeed, float maxTurnRate,
+        //    float scale
+        _vehicle = std::make_unique<Vehicle>(_gameWorld, glm::vec3(0.f, 0.f, 1.f), 0.f, glm::vec3(0.f, 0.f, 0.f),
+            1.f, 10.f, 10.f, 10.f, 1.f);
     }
 
     void Game2D::onAttach()
@@ -25,6 +33,8 @@ namespace game
 
         _spellSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/spell.wav");
         _magicFailSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/magicfail.wav");
+
+        _vehicle->loadAssets();
     }
 
     void Game2D::onDetach()
@@ -37,6 +47,7 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->onUpdate(timeStep);
+        _vehicle->onUpdate(timeStep);
         Tempest::Renderer2D::resetStats();
 
         Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
@@ -44,6 +55,7 @@ namespace game
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
         _testText->displayText({ -2.f, 4.0f }, { 1.f, 1.f }, _squareColour, "Tech Demo!");
+        _vehicle->onRender();
         Tempest::Renderer2D::endScene();
     }
 

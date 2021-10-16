@@ -460,6 +460,54 @@ namespace Tempest
         renderer2DData.stats.quadCount++;
     }
 
+    void Renderer2D::drawRotatedQuad(const glm::mat4& transform, const glm::vec2& size, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        constexpr glm::vec2 textureCoords[] = {
+                { 0.f, 0.f },
+                { 1.f, 0.f },
+                { 1.f, 1.f },
+                { 0.f, 1.f }
+        };
+
+        if (renderer2DData.quadIndexCount >= Renderer2DData::maxIndices)
+        {
+            flushAndReset();
+        }
+
+        int textureIndex = 0;
+
+        for (uint32_t i = 1; i < renderer2DData.textureSlotIndex; ++i)
+        {
+            if (*renderer2DData.textureSlots[i].get() == *texture.get())
+            {
+                textureIndex = i;
+            }
+        }
+
+        if (textureIndex == 0)
+        {
+            textureIndex = renderer2DData.textureSlotIndex;
+            renderer2DData.textureSlots[renderer2DData.textureSlotIndex] = texture;
+            renderer2DData.textureSlotIndex++;
+        }
+
+        for (uint32_t i = 0; i < 4; ++i)
+        {
+            renderer2DData.quadVertexBufferPtr->position = transform * renderer2DData.quadVertexPositions[i];
+            renderer2DData.quadVertexBufferPtr->colour = tint;
+            renderer2DData.quadVertexBufferPtr->texCoord = textureCoords[i];
+            renderer2DData.quadVertexBufferPtr->tilingFactor = tileFactor;
+            renderer2DData.quadVertexBufferPtr->textureIndex = textureIndex;
+            renderer2DData.quadVertexBufferPtr++;
+        }
+
+        renderer2DData.quadIndexCount += 6;
+
+        renderer2DData.stats.quadCount++;
+    }
+
     void Renderer2D::drawText(const glm::vec2& position, const glm::vec2& size, const stbtt_aligned_quad& texCoords, const ref<Texture2D> texture, float tileFactor, const glm::vec4& tint)
     {
         drawText(glm::vec3(position.x, position.y, 0.f), size, texCoords, texture, tileFactor, tint);

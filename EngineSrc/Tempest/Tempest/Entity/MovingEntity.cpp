@@ -17,7 +17,10 @@ namespace Tempest
                                _side(glm::perp(heading, glm::vec3(1.0, 0.0, 1.0))),
                                _maxSpeed(maxSpeed),
                                _maxTurnRate(turnRate),
-                               _maxForce(maxForce)
+                               _maxForce(maxForce),
+                               _transformMatrix(1.f),
+                               _rotationMatrix(1.f),
+                               _time(0.f)
     {
         _scale = scale;
     }
@@ -74,10 +77,10 @@ namespace Tempest
             return true;
         }
 
-        glm::mat4x4 rotationMatrix = glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
+        _rotationMatrix = glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
 
-        _heading = rotationMatrix * glm::vec4(_heading, 1.f);
-        _velocity = rotationMatrix * glm::vec4(_velocity, 1.f);
+        _heading = _rotationMatrix * glm::vec4(_heading, 1.f);
+        _velocity = _rotationMatrix * glm::vec4(_velocity, 1.f);
         
         _side = glm::perp(_heading, glm::vec3(1.0, 0.0, 1.0));
 
@@ -139,15 +142,14 @@ namespace Tempest
         _time += ts;
 
         glm::vec3 oldPos = getPos();
-        glm::vec3 steeringForce;
+        glm::vec3 steeringForce = { 0.f, 0.f, 0.f }; //= _steeringBehavior->calculate();
 
-        glm::vec3 steeringForce = { 1.f, 1.f, 1.f }; //= _steeringBehavior->calculate();
         glm::vec3 acceleration = steeringForce / _mass;
 
         _velocity += acceleration * _time;
 
         //Calculating drag force.
-        _velocity = glm::trunc(glm::vec3{ _maxSpeed, _maxSpeed, 1.f });
+        //_velocity = glm::trunc(glm::vec3{ _maxSpeed, _maxSpeed, 0.f });
 
         _pos = _velocity * _time;
 
@@ -162,7 +164,6 @@ namespace Tempest
 
     void MovingEntity::calculateTransformMatrix()
     {
-        _transformMatrix = glm::translate(glm::mat4x4(1.f), _pos) *
-            glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
+        _transformMatrix = glm::translate(glm::mat4x4(1.f), _pos) * _rotationMatrix;
     }
 }

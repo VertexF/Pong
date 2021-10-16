@@ -65,6 +65,8 @@ namespace Tempest
         //This holds the translation from world to local and local to world basis.
         glm::mat4 _transformMatrix;
 
+        //Hold the rotation matrix value
+        glm::mat4 _rotationMatrix;
         float _mass;
 
         //The maximum speed this entity may travel at.
