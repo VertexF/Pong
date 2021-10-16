@@ -2,14 +2,14 @@
 
 #include <glm/gtx/perpendicular.hpp>
 #include <glm/gtx/norm.hpp>
-#include <glm/gtx/matrix_transform_2d.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Tempest 
 {
-    MovingEntity::MovingEntity(const glm::vec3& position, double radius, const glm::vec3& velocity,
-                              double maxSpeed, const glm::vec3& heading, double mass,
-                              const glm::vec3& scale, double turnRate, double maxForce) 
+    MovingEntity::MovingEntity(const glm::vec3& position, float radius, const glm::vec3& velocity,
+                              float maxSpeed, const glm::vec3& heading, float mass,
+                              const glm::vec2& scale, float turnRate, float maxForce) 
                               : BaseGameEntity(0, position, radius),
                                _velocity(velocity),
                                _heading(heading),
@@ -32,7 +32,7 @@ namespace Tempest
         _velocity = vel;
     }
 
-    double MovingEntity::getMass() const 
+    float MovingEntity::getMass() const 
     {
         return _mass;
     }
@@ -89,43 +89,80 @@ namespace Tempest
         return (_maxSpeed * _maxSpeed) >= (getSpeedSq());
     }
 
-    double MovingEntity::getSpeed() const 
+    float MovingEntity::getSpeed() const 
     {
         return glm::length(_velocity);
     }
 
-    double MovingEntity::getSpeedSq() const 
+    float MovingEntity::getSpeedSq() const 
     {
         return glm::length2(_velocity);
     }
 
-    double MovingEntity::getMaxSpeed() const 
+    float MovingEntity::getMaxSpeed() const 
     {
         return _maxSpeed;
     }
 
-    void MovingEntity::setMaxSpeed(double max) 
+    void MovingEntity::setMaxSpeed(float max) 
     {
         _maxSpeed = max;
     }
 
-    double MovingEntity::getMaxForce() const 
+    float MovingEntity::getMaxForce() const 
     {
         return _maxForce;
     }
 
-    void MovingEntity::setMaxForce(double max) 
+    void MovingEntity::setMaxForce(float max) 
     {
         _maxForce = max;
     }
 
-    double MovingEntity::getMaxTurnRate() const 
+    float MovingEntity::getMaxTurnRate() const 
     {
         return _maxTurnRate;
     }
 
-    void MovingEntity::setMaxTurnRate(double max) 
+    void MovingEntity::setMaxTurnRate(float max) 
     {
         _maxTurnRate = max;
+    }
+
+    glm::mat4 MovingEntity::getTransform() const 
+    {
+        return _transformMatrix;
+    }
+
+    void MovingEntity::intergrate(Tempest::TimeStep ts)
+    {
+        _time += ts;
+
+        glm::vec3 oldPos = getPos();
+        glm::vec3 steeringForce;
+
+        glm::vec3 steeringForce = { 1.f, 1.f, 1.f }; //= _steeringBehavior->calculate();
+        glm::vec3 acceleration = steeringForce / _mass;
+
+        _velocity += acceleration * _time;
+
+        //Calculating drag force.
+        _velocity = glm::trunc(glm::vec3{ _maxSpeed, _maxSpeed, 1.f });
+
+        _pos = _velocity * _time;
+
+        if (glm::epsilonEqual(glm::length2(_velocity), 00000001.f, 00000000001.f) == false)
+        {
+            _heading = glm::normalize(_velocity);
+            _side = glm::perp(_heading, glm::vec3(1.0, 0.0, 1.0));
+        }
+
+        calculateTransformMatrix();
+    }
+
+    void MovingEntity::calculateTransformMatrix()
+    {
+        _transformMatrix = glm::translate(glm::mat4x4(1.f), _pos) *
+            glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
     }
 }

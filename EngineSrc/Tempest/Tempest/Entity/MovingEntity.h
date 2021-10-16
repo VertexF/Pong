@@ -10,16 +10,24 @@ namespace Tempest
     class MovingEntity : public BaseGameEntity
     {
     public:
-        MovingEntity(const glm::vec3& position, double radius, const glm::vec3& velocity,
-                     double maxSpeed, const glm::vec3& heading, double mass, 
-                     const glm::vec3& scale, double turnRate, double maxForce);
+        MovingEntity(const glm::vec3& position, float radius, const glm::vec3& velocity,
+                     float maxSpeed, const glm::vec3& heading, float mass, 
+                     const glm::vec2& scale, float turnRate, float maxForce);
 
         virtual ~MovingEntity() = default;
+
+        virtual void onUpdate(TimeStep time) = 0;
+        virtual void onRender() = 0;
+
+        virtual bool handleMessage(const Telegram& tele) = 0;
+
+        virtual void write(std::ofstream outStream) = 0;
+        virtual void read(std::ifstream inStream) = 0;
 
         glm::vec3 getVelocity() const;
         void setVelocity(const glm::vec3& vel);
 
-        double getMass() const;
+        float getMass() const;
 
         glm::vec3 getSide() const;
 
@@ -28,19 +36,24 @@ namespace Tempest
         bool rotateToFaceHeading(const glm::vec3& target);
 
         bool isSpeedMaxedOut() const;
-        double getSpeed() const;
-        double getSpeedSq() const;
+        float getSpeed() const;
+        float getSpeedSq() const;
 
-        double getMaxSpeed() const;
-        void setMaxSpeed(double max);
+        float getMaxSpeed() const;
+        void setMaxSpeed(float max);
 
-        double getMaxForce() const;
-        void setMaxForce(double max);
+        float getMaxForce() const;
+        void setMaxForce(float max);
 
-        double getMaxTurnRate() const;
-        void setMaxTurnRate(double max);
+        float getMaxTurnRate() const;
+        void setMaxTurnRate(float max);
 
-    private:
+        glm::mat4 getTransform() const;
+
+        void intergrate(Tempest::TimeStep ts);
+        void calculateTransformMatrix();
+
+    protected:
         glm::vec3 _velocity;
 
         //A normalised vector point in the direction the entity is heading.
@@ -49,16 +62,22 @@ namespace Tempest
         //A vector perpendicular to the head vector.
         glm::vec3 _side;
 
-        double _mass;
+        //This holds the translation from world to local and local to world basis.
+        glm::mat4 _transformMatrix;
+
+        float _mass;
 
         //The maximum speed this entity may travel at.
-        double _maxSpeed;
+        float _maxSpeed;
 
         //The maximum force of thrust forward.
-        double _maxForce;
+        float _maxForce;
 
         //The maximum torque this vehicle can rotate.
-        double _maxTurnRate;
+        float _maxTurnRate;
+
+        //This stores the time used for intergration.
+        float _time;
     };
 }
 

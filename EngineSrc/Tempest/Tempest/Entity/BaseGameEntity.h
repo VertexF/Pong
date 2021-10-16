@@ -19,47 +19,15 @@ namespace Tempest
         //The length of the object's bounding radius.
         double _boundingRadius;
 
-        BaseGameEntity() : _id(nextValidID()),
-            _boundingRadius(0.0),
-            _pos(glm::vec3()),
-            _scale(glm::vec2(1.0, 1.0)),
-            _entityType(Default_Entity_Type),
-            _tag(false)
-        {
-        }
+        BaseGameEntity();
+        BaseGameEntity(int entityType);
+        BaseGameEntity(int entityType, glm::vec3 pos, double radius);
+        BaseGameEntity(int entityType, int forceID);
 
-        BaseGameEntity(int entityType) : _id(nextValidID()),
-            _boundingRadius(0.0),
-            _pos(glm::vec3()),
-            _scale(glm::vec2(1.0, 1.0)),
-            _entityType(entityType),
-            _tag(false)
-        {
-        }
-
-        BaseGameEntity(int entityType, glm::vec3 pos, double radius) :
-            _id(nextValidID()),
-            _boundingRadius(radius),
-            _pos(pos),
-            _scale(glm::vec2(1.0, 1.0)),
-            _entityType(entityType),
-            _tag(false)
-        {
-        }
-
-        BaseGameEntity(int entityType, int forceID) :
-            _id(forceID),
-            _boundingRadius(0.0),
-            _pos(glm::vec3()),
-            _scale(glm::vec2(1.0, 1.0)),
-            _entityType(entityType),
-            _tag(false)
-        {
-        }
     public:
         virtual ~BaseGameEntity() = default;
 
-        virtual void onUpdate(const TimeStep& time) = 0;
+        virtual void onUpdate(TimeStep time) = 0;
         virtual void onRender() = 0;
 
         virtual bool handleMessage(const Telegram& tele) = 0;
@@ -67,24 +35,24 @@ namespace Tempest
         virtual void write(std::ofstream outStream) = 0;
         virtual void read(std::ifstream inStream) = 0;
 
-        glm::vec3 getPos() const { return _pos; }
-        void setPos(const glm::vec3& pos) { _pos = pos; }
+        glm::vec3 getPos() const;
+        void setPos(const glm::vec3& pos);
 
-        double getBRadius() const { return _boundingRadius; }
-        void setBRadius(double radius) { _boundingRadius = radius; }
+        double getBRadius() const;
+        void setBRadius(double radius);
 
-        int getID() const { return _id; }
+        int getID() const;
 
-        bool isTagged() const { return _tag; }
-        void tag() { _tag = true; }
-        void untag() { _tag = false; }
+        bool isTagged() const;
+        void tag();
+        void untag();
 
-        glm::vec2 getScale() const { return _scale; }
+        glm::vec2 getScale() const;
         void setScale(const glm::vec2& value);
         void setScale(double value);
 
-        int getEntityType() const { return _entityType; }
-        void setEntityType(int newType) { _entityType = newType; }
+        int getEntityType() const;
+        void setEntityType(int newType);
     public:
         enum { Default_Entity_Type = -1};
 
@@ -93,12 +61,6 @@ namespace Tempest
         //Every entity has a type associated with (health, troll, ammo).
         int _entityType;
         bool _tag;
-
-        int nextValidID()
-        {
-            static int nextID = 0;
-            return nextID++;
-        }
     };
 }
 

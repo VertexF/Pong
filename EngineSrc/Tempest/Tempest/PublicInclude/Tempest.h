@@ -39,4 +39,10 @@
 //Effects
 #include "Tempest/Renderer/ParticalSystem.h"
 
+//Entities
+#include "Tempest/Entity/MovingEntity.h"
+#include "Tempest/Entity/SteeringBehavior.h"
+#include "Tempest/Entity/GameWorld.h"
+#include "Tempest/Entity/Telegram.h"
+
 #endif // !TEMPEST_HDR
