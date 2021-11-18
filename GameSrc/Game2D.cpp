@@ -21,8 +21,8 @@ namespace game
         //Tempest::scope<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
         //    const glm::vec3& velocity, float mass, float maxForce, float maxSpeed, float maxTurnRate,
         //    float scale
-        _vehicle = std::make_unique<Vehicle>(_gameWorld, glm::vec3(0.f, 0.f, 1.f), 0.f, glm::vec3(0.f, 0.f, 0.f),
-            1.f, 10.f, 10.f, 10.f, 1.f);
+        _vehicle = std::make_unique<Vehicle>(_gameWorld, glm::vec3(0.f, 0.f, 1.f), 100.f, glm::vec3(0.f, 0.f, 0.f),
+            10.f, 1.f, 2.f, 1.f, 1.f);
     }
 
     void Game2D::onAttach()
@@ -94,6 +94,10 @@ namespace game
             break;
         case TEMP_KEY_2:
             _mySource->play(_magicFailSoundBuffer);
+            break;
+        case TEMP_KEY_3:
+            _vehicle->setVelocity({0.f, 0.01f, 0.0f});
+            //_vehicle->setScale(2.f);
             break;
         }
 

@@ -493,9 +493,11 @@ namespace Tempest
             renderer2DData.textureSlotIndex++;
         }
 
+        glm::mat4 finalTransform = transform * glm::scale(glm::mat4x4(1.f), { size.x, size.y, 1.f });
+
         for (uint32_t i = 0; i < 4; ++i)
         {
-            renderer2DData.quadVertexBufferPtr->position = transform * renderer2DData.quadVertexPositions[i];
+            renderer2DData.quadVertexBufferPtr->position = finalTransform * renderer2DData.quadVertexPositions[i];
             renderer2DData.quadVertexBufferPtr->colour = tint;
             renderer2DData.quadVertexBufferPtr->texCoord = textureCoords[i];
             renderer2DData.quadVertexBufferPtr->tilingFactor = tileFactor;

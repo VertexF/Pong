@@ -13,6 +13,8 @@ namespace game
         Tempest::MovingEntity(pos, scale, velocity, maxSpeed, glm::vec3(glm::sin(rotation), -glm::cos(rotation), 1.f),
             mass, glm::vec2(scale, scale), maxTurnRate, maxForce)
     {
+        _steeringBehavior = std::make_unique<Tempest::SteeringBehavior>();
+        _direction = pos;
     }
 
     void Vehicle::loadAssets() 
@@ -26,8 +28,17 @@ namespace game
 
         if (Tempest::Input::isMouseButtonPressed(0)) 
         {
-            rotateToFaceHeading(glm::vec3(Tempest::Input::getMousePosition(), 1.f));
+            //rotateToFaceHeading(glm::vec3({1.f, 1.f, 0.f}));
+
+            //_direction = { 10.f, -10.f, 1.f };
+
+            float screenWidth = Tempest::Input::getMouseX() / 1280.f;
+            float screenHeight = Tempest::Input::getMouseY() / 720.f;
+
+            setVelocity(_steeringBehavior->seek({ screenWidth, screenHeight, 1.f }, _pos, _velocity, _maxSpeed));
         }
+
+        //rotateToFaceHeading(_direction);
 
         intergrate(ts);
     }

@@ -50,6 +50,8 @@ namespace Tempest
 
         glm::mat4 getTransform() const;
 
+        void wrapAround(glm::vec3& position, float screenWidth, float screenHeight);
+
         void intergrate(Tempest::TimeStep ts);
         void calculateTransformMatrix();
 

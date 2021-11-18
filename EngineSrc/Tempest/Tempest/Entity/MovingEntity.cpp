@@ -5,6 +5,15 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+//TODO: Since I can actually write code that works in 3D space. I think I should re-write this like the Rigid body class in the old engine.
+//With the GLM as the underlying maths so I can get that sweet SSE.
+//Reason being, I'm literally already rewriting the RigidBody class anyway, the intergration set is LITERALLY exactly the same code. Apart 
+//from the fact the force is generated outside of the class as AI stuff. There is nothing new here what I did worked and it's basically
+//already 3D anyway so why shouldn't we?
+
+//List of stuff to:
+//1) Rip out the the BaseEntity
+
 namespace Tempest 
 {
     MovingEntity::MovingEntity(const glm::vec3& position, float radius, const glm::vec3& velocity,
@@ -65,26 +74,33 @@ namespace Tempest
     //! @return true when the heading is facing in the desired direction.
     bool MovingEntity::rotateToFaceHeading(const glm::vec3& target) 
     {
-        glm::vec3 toTarget = glm::normalize(target - _pos);
+        glm::vec3 delta = target - _pos;
 
-        //First determine the angle between the heading vector and the target.
-        float dotProduct = glm::dot(_heading, toTarget);
-        float angle = glm::acos(dotProduct);
-
-        //Return true if the entity is facing the target.
-        if (angle < 0.0000001) 
+        if (glm::epsilonEqual(glm::length(delta), 0.f, 0.0000000001f) == false)
         {
-            return true;
+            glm::vec3 toTarget = glm::normalize(delta);
+
+            //First determine the angle between the heading vector and the target.
+            float dotProduct = glm::dot(_heading, toTarget);
+            float angle = glm::acos(dotProduct);
+
+            //Return true if the entity is facing the target.
+            if (dotProduct < 0.0000001f)
+            {
+                return true;
+            }
+
+            _rotationMatrix = glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
+
+            _heading = glm::vec4(_heading, 1.f) * _transformMatrix;
+            _velocity = glm::vec4(_velocity, 1.f) * _transformMatrix;
+
+            _side = glm::perp(_heading, glm::vec3(0.f, 1.f, 1.f));
+
+            return false;
         }
 
-        _rotationMatrix = glm::rotate(glm::mat4x4(1.f), glm::radians(angle * glm::sign(dotProduct)), { 0.f, 0.f, 1.f });
-
-        _heading = _rotationMatrix * glm::vec4(_heading, 1.f);
-        _velocity = _rotationMatrix * glm::vec4(_velocity, 1.f);
-        
-        _side = glm::perp(_heading, glm::vec3(1.0, 0.0, 1.0));
-
-        return false;
+        return true;
     }
 
     bool MovingEntity::isSpeedMaxedOut() const 
@@ -137,27 +153,59 @@ namespace Tempest
         return _transformMatrix;
     }
 
+    void MovingEntity::wrapAround(glm::vec3& position, float screenWidth, float screenHeight) 
+    {
+        //TODO: Get better at the maths that requires that you understand how you do this without hacks.
+
+        if (position.x > screenWidth + 9.6f) 
+        {
+            position.x = -9.5f;
+        }
+
+        if (position.x < -9.6f)
+        {
+            position.x = screenWidth + 9.5f;
+        }
+
+        if (position.y < -5.6f)
+        {
+            position.y = screenHeight + 5.f;
+        }
+
+        if (position.y > screenHeight + 4.5f)
+        {
+            position.y = -5.0f;
+        }
+
+    }
+
     void MovingEntity::intergrate(Tempest::TimeStep ts)
     {
-        _time += ts;
+        //_time += ts;
 
         glm::vec3 oldPos = getPos();
         glm::vec3 steeringForce = { 0.f, 0.f, 0.f }; //= _steeringBehavior->calculate();
 
         glm::vec3 acceleration = steeringForce / _mass;
 
-        _velocity += acceleration * _time;
+        _velocity += acceleration * static_cast<float>(ts);
 
         //Calculating drag force.
-        //_velocity = glm::trunc(glm::vec3{ _maxSpeed, _maxSpeed, 0.f });
+        if (glm::length(_velocity) > _maxSpeed) 
+        {
+            _velocity = glm::normalize(_velocity);
+            _velocity *= _maxSpeed;
+        }
 
-        _pos = _velocity * _time;
+        _pos += _velocity * static_cast<float>(ts);
 
-        if (glm::epsilonEqual(glm::length2(_velocity), 00000001.f, 00000000001.f) == false)
+        if (glm::epsilonEqual(glm::length2(_velocity), 0.f, 00000000001.f) == false)
         {
             _heading = glm::normalize(_velocity);
             _side = glm::perp(_heading, glm::vec3(1.0, 0.0, 1.0));
         }
+
+        //wrapAround(_pos, 1.f, 1.f);
 
         calculateTransformMatrix();
     }
@@ -165,5 +213,7 @@ namespace Tempest
     void MovingEntity::calculateTransformMatrix()
     {
         _transformMatrix = glm::translate(glm::mat4x4(1.f), _pos) * _rotationMatrix;
+
+        _transformMatrix = glm::inverse(_transformMatrix);
     }
 }

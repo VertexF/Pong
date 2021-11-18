@@ -40,6 +40,8 @@ namespace game
 
         Tempest::ref<Tempest::Texture2D> _shipTexture;
 
+        glm::vec3 _direction;
+
         float _time = 0.f;
     };
 }

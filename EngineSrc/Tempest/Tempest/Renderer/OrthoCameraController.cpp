@@ -37,20 +37,17 @@ namespace Tempest
             _cameraPosition.x += _cameraMovementSpeed * ts;
         }
 
-        if (_rotation) 
+        //Rotation
+        if (Input::isKeyPressed(TEMP_KEY_Z))
         {
-            if (Input::isKeyPressed(TEMP_KEY_Z))
-            {
-                _rotation += _rotationSpeed * ts;
-            }
-            else if (Input::isKeyPressed(TEMP_KEY_X))
-            {
-                _rotation -= _rotationSpeed * ts;
-            }
-
-            _camera.setRotation(_rotation);
+            _rotation += _rotationSpeed * ts;
+        }
+        else if (Input::isKeyPressed(TEMP_KEY_X))
+        {
+            _rotation -= _rotationSpeed * ts;
         }
 
+        _camera.setRotation(_rotation);
         _camera.setPosition(_cameraPosition);
         _cameraMovementSpeed = _zoomLevel;
     }
