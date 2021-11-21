@@ -9,20 +9,17 @@
 
 namespace Tempest 
 {
-    RigidBody::RigidBody(const glm::vec3& position, float radius, const glm::vec3& velocity,
+    RigidBody::RigidBody(const glm::vec3& position, const glm::vec3& velocity,
                               float maxSpeed, const glm::vec3& heading, float mass,
                               const glm::vec2& scale, float turnRate, float maxForce) 
-                              : BaseGameEntity(0, position, radius),
-                               _velocity(velocity),
+        _velocity(velocity),
                                _heading(heading),
                                _mass(mass),
                                _side(glm::perp(heading, glm::vec3(1.0, 0.0, 1.0))),
                                _maxSpeed(maxSpeed),
                                _maxTurnRate(turnRate),
                                _maxForce(maxForce),
-                               _transformMatrix(1.f),
-                               _rotationMatrix(1.f),
-                               _time(0.f)
+                               _transformMatrix(1.f)
     {
         _scale = scale;
     }
@@ -183,8 +180,8 @@ namespace Tempest
 
     void RigidBody::intergrate(Tempest::TimeStep ts)
     {
-        glm::vec3 oldPos = getPos();
-        _forceAccumate = { 0.f, 0.f, 0.f }; //= _steeringBehavior->calculate();
+        //glm::vec3 oldPos = getPos();
+        //_forceAccumate = { 0.f, 0.f, 0.f }; //= _steeringBehavior->calculate();
 
         _lastFrameAcceleration = _acceleration;
         _lastFrameAcceleration = _lastFrameAcceleration + (_forceAccumate / _mass);

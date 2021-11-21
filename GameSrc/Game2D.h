@@ -28,9 +28,14 @@ namespace game
     private:
         glm::vec4 _squareColour;
 
+        uint32_t _mapWidth;
+        uint32_t _mapHieght;
+
         Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
         Tempest::scope<Tempest::TextRenderer> _testText;
         Tempest::scope<Vehicle> _vehicle;
+        Tempest::ref<Tempest::Texture2D> _spriteSheet;
+        Tempest::ref<Tempest::SubTexture2D> _grassTexture;
 
         uint32_t _spellSoundBuffer = 0;
         uint32_t _magicFailSoundBuffer = 0;
@@ -39,6 +44,8 @@ namespace game
         Tempest::ref<Tempest::SoundBuffer> _soundBuffer;
         Tempest::ref<Tempest::SoundSource> _mySource;
         Tempest::ref<Tempest::GameWorld> _gameWorld;
+
+        std::unordered_map<char, Tempest::ref<Tempest::SubTexture2D>> _textureMap;
     };
 }
 

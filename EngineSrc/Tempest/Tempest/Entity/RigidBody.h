@@ -1,14 +1,15 @@
-#ifndef MOVING_ENTITY_HDR
-#define MOVING_ENTITY_HDR
+#ifndef RIGID_BODY_HDR
+#define RIGID_BODY_HDR
 
 #include <glm/glm.hpp>
+#include "../Core/TimeStep.h"
 
 namespace Tempest 
 {
     class RigidBody
     {
     public:
-        RigidBody(const glm::vec3& position, float radius, const glm::vec3& velocity,
+        RigidBody(const glm::vec3& position, const glm::vec3& velocity,
                      float maxSpeed, const glm::vec3& heading, float mass, 
                      const glm::vec2& scale, float turnRate, float maxForce);
 
@@ -83,8 +84,6 @@ namespace Tempest
         //This holds the translation from world to local and local to world basis.
         glm::mat4 _transformMatrix;
 
-        //Hold the rotation matrix value
-        glm::mat4 _rotationMatrix;
         float _mass;
 
         //The maximum speed this entity may travel at.
@@ -95,9 +94,6 @@ namespace Tempest
 
         //The maximum torque this vehicle can rotate.
         float _maxTurnRate;
-
-        //This stores the time used for intergration.
-        float _time;
     };
 }
 
