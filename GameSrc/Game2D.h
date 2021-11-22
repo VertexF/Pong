@@ -7,8 +7,6 @@
 #include "Tempest/Events/Event.h"
 #include "Tempest/Events/KeyEvents.h"
 
-#include "Vehicle.h"
-
 namespace game
 {
     class Game2D : public Tempest::Layer
@@ -33,7 +31,7 @@ namespace game
 
         Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
         Tempest::scope<Tempest::TextRenderer> _testText;
-        Tempest::scope<Vehicle> _vehicle;
+
         Tempest::ref<Tempest::Texture2D> _spriteSheet;
         Tempest::ref<Tempest::SubTexture2D> _grassTexture;
 
@@ -43,7 +41,6 @@ namespace game
         Tempest::ref<Tempest::SoundDevice> _soundDevice;
         Tempest::ref<Tempest::SoundBuffer> _soundBuffer;
         Tempest::ref<Tempest::SoundSource> _mySource;
-        Tempest::ref<Tempest::GameWorld> _gameWorld;
 
         std::unordered_map<char, Tempest::ref<Tempest::SubTexture2D>> _textureMap;
     };

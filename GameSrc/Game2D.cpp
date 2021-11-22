@@ -39,14 +39,6 @@ namespace game
         _soundBuffer = Tempest::SoundBuffer::create();
         _mySource = std::make_shared<Tempest::SoundSource>();
 
-        _gameWorld = std::make_shared<Tempest::GameWorld>();
-
-        //Tempest::scope<Tempest::GameWorld> world, const glm::vec3& pos, float rotation,
-        //    const glm::vec3& velocity, float mass, float maxForce, float maxSpeed, float maxTurnRate,
-        //    float scale
-        _vehicle = std::make_unique<Vehicle>(_gameWorld, glm::vec3(0.f, 0.f, 1.f), 100.f, glm::vec3(0.f, 0.f, 0.f),
-            10.f, 1.f, 2.f, 1.f, 1.f);
-
         _spriteSheet = Tempest::Texture2D::create("Assets/Textures/RPGpack_sheet_2X.png");
 
         _grassTexture = Tempest::SubTexture2D::createFromCoords(_spriteSheet, { 0, 19 }, { 128, 128 });
@@ -65,8 +57,6 @@ namespace game
 
         _spellSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/spell.wav");
         _magicFailSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/magicfail.wav");
-
-        _vehicle->loadAssets();
     }
 
     void Game2D::onDetach()
@@ -145,10 +135,6 @@ namespace game
             break;
         case TEMP_KEY_2:
             _mySource->play(_magicFailSoundBuffer);
-            break;
-        case TEMP_KEY_3:
-            _vehicle->setVelocity({0.f, 0.01f, 0.0f});
-            //_vehicle->setScale(2.f);
             break;
         }
 
