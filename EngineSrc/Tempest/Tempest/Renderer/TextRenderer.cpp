@@ -131,4 +131,26 @@ namespace Tempest
             ++text;
         }
     }
+
+    void TextRenderer::displayText(const glm::vec3& position, const glm::vec2 blockSize, const glm::vec4& textColour, const char* text)
+    {
+        float packQuadX = 0.f;
+        float packQuadY = 0.f;
+        while (*text)
+        {
+            if (*text >= 32 && *text < 128)
+            {
+                stbtt_aligned_quad textureCoords;
+                stbtt_GetPackedQuad(_asciiBuffer, _textureSize, _textureSize, *text - 32, &packQuadX, &packQuadY, &textureCoords, 0);
+
+                textureCoords.x0 = textureCoords.x0 / _fontSize;
+                textureCoords.x1 = textureCoords.x1 / _fontSize;
+                textureCoords.y0 = textureCoords.y0 / _fontSize;
+                textureCoords.y1 = textureCoords.y1 / _fontSize;
+
+                Renderer2D::drawText(position, blockSize, textureCoords, _textTexture, 1.f, textColour);
+            }
+            ++text;
+        }
+    }
 }

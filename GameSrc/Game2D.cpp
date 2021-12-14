@@ -3,34 +3,18 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+#include <cmath>
 
 namespace 
 {
-    const uint32_t MAP_WIDTH = 24;
-    const char* TILE_MAP = 
-        "WWWWWWWWWWWWWWWWWWWWWWWW"
-        "WWWWWWWWWWWWWWWWWWWWWWWW"
-        "WWWWWDDDDDDDDDDDDDWWWWWW"
-        "WWWWDDDDDDDDDDDDDDDWWWWW"
-        "WWWDDDDDDDDDDDDDDDDDWWWW"
-        "WWWWDDDDDDDDDDDDDDDDWWWW"
-        "WWWWWWDDDDDDDDDDDDDDDWWW"
-        "WWWWWWWDDDDDDDDDDDDDWWWW"
-        "WWWWDDDDDDDDDDDDDDDDDWWW"
-        "WWWWWWDDDWWDDDDDDDDDDWWW"
-        "WWWWWWWDDWWDDDDDDDDDDWWW"
-        "WWWWWWWWDDWWWDDDDWWWWWWW"
-        "WWWWWWWWDDDDDDDDDDWWWWWW"
-        "WWWWWWWWWDDDDDDDDDDWWWWW"
-        "WWWWWWWWWDDDDDDDDWWWWWWW"
-        "WWWWWWWWWWWDDDDWWWWWWWWW"
-        "WWWWWWWWWWWWWWWWWWWWWWWW";
+    const int MAP_WIDTH = 64;
 }
 
 namespace game
 {
     Game2D::Game2D() : Layer("Game"), _squareColour({ 0.8f, 0.3f, 0.2f, 1.f })
     {
+        TEMPEST_PROFILE_FUNCTION();
         _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
 
         _testText = std::make_unique<Tempest::TextRenderer>(128.f);
@@ -39,21 +23,18 @@ namespace game
         _soundBuffer = Tempest::SoundBuffer::create();
         _mySource = std::make_shared<Tempest::SoundSource>();
 
-        _spriteSheet = Tempest::Texture2D::create("Assets/Textures/RPGpack_sheet_2X.png");
+        _backgroundTexture = Tempest::Texture2D::create("Assets/Textures/Checkerboard.png");
+        _transCheck = Tempest::Texture2D::create("Assets/Textures/alpha.png");
 
-        _grassTexture = Tempest::SubTexture2D::createFromCoords(_spriteSheet, { 0, 19 }, { 128, 128 });
-        _textureMap['D'] = Tempest::SubTexture2D::createFromCoords(_spriteSheet, { 6, 11 }, { 128, 128 });
-        _textureMap['W'] = Tempest::SubTexture2D::createFromCoords(_spriteSheet, { 11, 11 }, { 128, 128 });
-
-        _mapWidth = MAP_WIDTH;
-        _mapHieght = strlen(TILE_MAP) / MAP_WIDTH;
+        _posX = 0.f;
+        _posY = 0.f;
     }
 
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _cameraController->setZoomLevel(10.f);
+        _cameraController->setZoomLevel(5.f);
 
         _spellSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/spell.wav");
         _magicFailSoundBuffer = _soundBuffer->addSoundEffect("Assets/Audio/magicfail.wav");
@@ -69,7 +50,29 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->onUpdate(timeStep);
-        //_vehicle->onUpdate(timeStep);
+
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_W)) 
+        {
+            _posY += 1.5f * timeStep;
+        }
+
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_S))
+        {
+            _posY -= 1.5f * timeStep;
+        }
+
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_A))
+        {
+            _posX -= 1.5f * timeStep;
+        }
+
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_D))
+        {
+            _posX += 1.5f * timeStep;
+        }
+
+        _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
+
         Tempest::Renderer2D::resetStats();
 
         Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
@@ -77,26 +80,12 @@ namespace game
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
 
-        for (uint32_t y = 0; y < _mapHieght; y++) 
-        {
-            for (uint32_t x = 0; x < _mapWidth; x++) 
-            {
-                char key = TILE_MAP[x + y * _mapWidth];
-                Tempest::ref<Tempest::SubTexture2D> texture;
-                if (_textureMap.find(key) != _textureMap.end()) 
-                {
-                    texture = _textureMap[key];
-                }
-                else 
-                {
-                    texture = _grassTexture;
-                }
+        Tempest::Renderer2D::drawQuad({ 1.f, 0.f, 0.5f }, { 30.f, 30.f }, _backgroundTexture, 20.f, { 0.4f, 0.8f, 0.8f, 1.f });
+        Tempest::Renderer2D::drawRotatedQuad({ _posX, _posY, 0.3f }, { 1.f, 1.f }, 0.f, _transCheck, 1.f, { 0.8f, 0.4f, 0.6f, 1.f });
 
-                Tempest::Renderer2D::drawQuad({ x - _mapWidth / 2.f, y - _mapHieght / 2.f, 0.5f }, { 1.f, 1.f }, texture);
-            }
-        }
+        _testText->displayText({ -1.f, 3.f, 0.1f}, { 1.f, 1.f }, _squareColour, "The Game!");
+        _testText->displayText({ _posX - 7.f, _posY + 4.f, 0.1f }, { 1.f, 1.f }, _squareColour, "0");
 
-        _testText->displayText({ -2.f, 4.0f }, { 1.f, 1.f }, _squareColour, "Tech Demo!");
         Tempest::Renderer2D::endScene();
     }
 
@@ -112,6 +101,86 @@ namespace game
     void Game2D::onImGuiRender()
     {
         TEMPEST_PROFILE_FUNCTION();
+
+        // If you strip some features of, this demo is pretty much equivalent to calling DockSpaceOverViewport()!
+        // In most cases you should be able to just call DockSpaceOverViewport() and ignore all the code below!
+        // In this specific demo, we are not using DockSpaceOverViewport() because:
+        // - we allow the host window to be floating/moveable instead of filling the viewport (when opt_fullscreen == false)
+        // - we allow the host window to have padding (when opt_padding == true)
+        // - we have a local menu bar in the host window (vs. you could use BeginMainMenuBar() + DockSpaceOverViewport() in your code!)
+        // TL;DR; this demo is more complicated than what you would normally use.
+        // If we removed all the options we are showcasing, this demo would become:
+        //     void ShowExampleAppDockSpace()
+        //     {
+        //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+        //     }
+
+        static bool opt_fullscreen = true;
+        static bool opt_padding = false;
+        static bool dockspaceShow = true;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+        // because it would be confusing to have two docking targets within each others.
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        if (opt_fullscreen)
+        {
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        }
+        else
+        {
+            dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+        }
+
+        // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+        // and handle the pass-thru hole, so we ask Begin() to not render a background.
+        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+            window_flags |= ImGuiWindowFlags_NoBackground;
+
+        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+        // all active windows docked into it will lose their parent and become undocked.
+        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+        if (!opt_padding)
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace Demo", &dockspaceShow, window_flags);
+        if (!opt_padding)
+            ImGui::PopStyleVar();
+
+        if (opt_fullscreen)
+            ImGui::PopStyleVar(2);
+
+        // Submit the DockSpace
+        ImGuiIO& io = ImGui::GetIO();
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+        {
+            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        }
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Close", "")) 
+                {
+                    Tempest::Application::get().close();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+
         ImGui::Begin("Settings");
 
         auto stats = Tempest::Renderer2D::getStats();
@@ -123,7 +192,13 @@ namespace game
 
         ImGui::ColorEdit4("Square Colour Picker", glm::value_ptr(_squareColour));
 
+        ImGui::Image((void *)_backgroundTexture->getRendererID(), ImVec2{ 64.f, 64.f });
+
         ImGui::End();
+
+        ImGui::End();
+
+
     }
 
     bool Game2D::onKeyPressed(Tempest::PressedKeyEvent& e)

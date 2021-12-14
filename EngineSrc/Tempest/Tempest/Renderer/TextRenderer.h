@@ -16,6 +16,7 @@ namespace Tempest
         ~TextRenderer();
 
         void displayText(const glm::vec2& position, const glm::vec2 blockSize, const glm::vec4& textColour, const char* text);
+        void displayText(const glm::vec3& position, const glm::vec2 blockSize, const glm::vec4& textColour, const char* text);
     private:
         void init();
         void TTFtoBitmap();

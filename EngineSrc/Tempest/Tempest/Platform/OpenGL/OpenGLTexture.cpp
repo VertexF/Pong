@@ -115,6 +115,11 @@ namespace Tempest
         glDeleteTextures(1, &_textureID);
     }
 
+    uint32_t OpenGLTexture2D::getRendererID() const
+    {
+        return _textureID;
+    }
+
     void OpenGLTexture2D::setData(void* data, uint32_t size) 
     {
         switch (_dataFormat)

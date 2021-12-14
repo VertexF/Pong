@@ -146,4 +146,9 @@ namespace Tempest
 
         _layerStack.pushOverlay(layer);
     }
+
+    void Application::close()
+    {
+        _running = false;
+    }
 }

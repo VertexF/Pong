@@ -19,6 +19,8 @@ namespace Tempest
         virtual uint32_t getWidth() const override { return _width; }
         virtual uint32_t getHeight() const override { return _height; }
 
+        virtual uint32_t getRendererID() const override;
+
         virtual void setData(void* data, uint32_t size) override;
 
         virtual void bind(uint32_t slot = 0) const override;

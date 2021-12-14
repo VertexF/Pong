@@ -19,33 +19,33 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        if (Input::isKeyPressed(TEMP_KEY_W))
-        {
-            _cameraPosition.y += _cameraMovementSpeed * ts;
-        }
-        else if (Input::isKeyPressed(TEMP_KEY_S))
-        {
-            _cameraPosition.y -= _cameraMovementSpeed * ts;
-        }
+        //if (Input::isKeyPressed(TEMP_KEY_W))
+        //{
+        //    _cameraPosition.y += _cameraMovementSpeed * ts;
+        //}
+        //else if (Input::isKeyPressed(TEMP_KEY_S))
+        //{
+        //    _cameraPosition.y -= _cameraMovementSpeed * ts;
+        //}
 
-        if (Input::isKeyPressed(TEMP_KEY_A))
-        {
-            _cameraPosition.x -= _cameraMovementSpeed * ts;
-        }
-        else if (Input::isKeyPressed(TEMP_KEY_D))
-        {
-            _cameraPosition.x += _cameraMovementSpeed * ts;
-        }
+        //if (Input::isKeyPressed(TEMP_KEY_A))
+        //{
+        //    _cameraPosition.x -= _cameraMovementSpeed * ts;
+        //}
+        //else if (Input::isKeyPressed(TEMP_KEY_D))
+        //{
+        //    _cameraPosition.x += _cameraMovementSpeed * ts;
+        //}
 
-        //Rotation
-        if (Input::isKeyPressed(TEMP_KEY_Z))
-        {
-            _rotation += _rotationSpeed * ts;
-        }
-        else if (Input::isKeyPressed(TEMP_KEY_X))
-        {
-            _rotation -= _rotationSpeed * ts;
-        }
+        ////Rotation
+        //if (Input::isKeyPressed(TEMP_KEY_Z))
+        //{
+        //    _rotation += _rotationSpeed * ts;
+        //}
+        //else if (Input::isKeyPressed(TEMP_KEY_X))
+        //{
+        //    _rotation -= _rotationSpeed * ts;
+        //}
 
         _camera.setRotation(_rotation);
         _camera.setPosition(_cameraPosition);

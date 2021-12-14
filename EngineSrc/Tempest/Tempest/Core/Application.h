@@ -29,6 +29,8 @@ namespace Tempest
 
         inline static Application& get() { return *_instance; }
         inline Window& getWindow() const { return *_window;  }
+
+        void close();
     private:
         bool onWindowClosed(WindowClosedEvent &closed);
         bool onWindowResize(WindowResizeEvent& resized);
