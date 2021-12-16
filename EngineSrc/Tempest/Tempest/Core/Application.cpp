@@ -22,13 +22,13 @@ namespace Tempest
     //First we intialise the window which sets up all the stuff needed to run.
     //Then we set up callback functions to the on event function in this class.
     //This allows events to be sent GLFW from our onEvent function.
-    Application::Application()
+    Application::Application(const std::string& title)
     {
         TEMPEST_PROFILE_FUNCTION();
 
         _instance = this;
 
-        _window = Window::create();
+        _window = Window::create(WindowProps(title));
         _window->setCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
         Renderer::init();

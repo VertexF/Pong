@@ -18,7 +18,7 @@ namespace Tempest
     class Application
     {
     public:
-        Application();
+        Application(const std::string& title = "Tempest Engine");
         virtual ~Application();
 
         void onEvent(Event &e);

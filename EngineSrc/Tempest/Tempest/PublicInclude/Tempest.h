@@ -27,6 +27,7 @@
 #include "Tempest/Renderer/VertexArray.h"
 #include "Tempest/Renderer/Texture.h"
 #include "Tempest/Renderer/SubTexture2D.h"
+#include "Tempest/Renderer/Framebuffer.h"
 #include "Tempest/Renderer/Renderer2D.h"
 
 #include "Tempest/Renderer/TextRenderer.h"
