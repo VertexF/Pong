@@ -39,11 +39,16 @@ namespace Tempest
         ref<SoundBuffer> _soundBuffer;
         ref<SoundSource> _mySource;
 
+        glm::vec2 _viewportSize;
+
         std::vector<float> _xPos;
         std::vector<float> _yPos;
 
         float _posX;
         float _posY;
+
+        bool _viewportFocused = false;
+        bool _viewportHoved = false;
     };
 }
 

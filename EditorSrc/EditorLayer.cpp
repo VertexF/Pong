@@ -49,32 +49,37 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _cameraController->onUpdate(timeStep);
+        if (_viewportFocused)
+        {
+            _cameraController->onUpdate(timeStep);
+        }
 
         _framebuffer->bind();
         RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
         RendererCommands::clear();
 
-        if (Input::isKeyPressed(TEMP_KEY_W)) 
+        if (_viewportFocused)
         {
-            _posY += 1.5f * timeStep;
-        }
+            if (Input::isKeyPressed(TEMP_KEY_W))
+            {
+                _posY += 1.5f * timeStep;
+            }
 
-        if (Input::isKeyPressed(TEMP_KEY_S))
-        {
-            _posY -= 1.5f * timeStep;
-        }
+            if (Input::isKeyPressed(TEMP_KEY_S))
+            {
+                _posY -= 1.5f * timeStep;
+            }
 
-        if (Input::isKeyPressed(TEMP_KEY_A))
-        {
-            _posX -= 1.5f * timeStep;
-        }
+            if (Input::isKeyPressed(TEMP_KEY_A))
+            {
+                _posX -= 1.5f * timeStep;
+            }
 
-        if (Input::isKeyPressed(TEMP_KEY_D))
-        {
-            _posX += 1.5f * timeStep;
+            if (Input::isKeyPressed(TEMP_KEY_D))
+            {
+                _posX += 1.5f * timeStep;
+            }
         }
-
         _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
 
         Renderer2D::resetStats();
@@ -194,10 +199,28 @@ namespace Tempest
 
         ImGui::ColorEdit4("Square Colour Picker", glm::value_ptr(_squareColour));
 
+        ImGui::End();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
+        ImGui::Begin("Viewport");
+
+        _viewportFocused = ImGui::IsWindowFocused();
+        _viewportHoved = ImGui::IsWindowHovered();
+        Application::get().getImGuiLayer()->blockEvents(_viewportFocused == false || _viewportHoved == false);
+
+        ImVec2 viewportPanel = ImGui::GetContentRegionAvail();
+        if (_viewportSize != *((glm::vec2*)&viewportPanel))
+        {
+            _viewportSize = { viewportPanel.x, viewportPanel.y };
+            _framebuffer->resize(static_cast<uint32_t>(_viewportSize.x), static_cast<uint32_t>(_viewportSize.y));
+
+            _cameraController->onResize(_viewportSize.x, _viewportSize.y);
+        }
         uint32_t colourAttacheID = _framebuffer->getColourAttachmentRendererID();
-        ImGui::Image((void*)colourAttacheID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::Image((void*)colourAttacheID, ImVec2{ viewportPanel.x, viewportPanel.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
         ImGui::End();
+        ImGui::PopStyleVar();
 
         ImGui::End();
 

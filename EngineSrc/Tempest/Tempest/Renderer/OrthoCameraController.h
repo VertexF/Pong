@@ -19,6 +19,8 @@ namespace Tempest
         void onUpdate(TimeStep ts);
         void onEvent(Event& e);
 
+        void onResize(float width, float height);
+
         OrthographicCamera& getCamera() { return _camera; }
         const OrthographicCamera& getCamera() const { return _camera; }
 

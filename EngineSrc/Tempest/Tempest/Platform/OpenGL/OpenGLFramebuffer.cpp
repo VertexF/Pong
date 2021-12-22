@@ -2,6 +2,11 @@
 
 #include <GL/glew.h>
 
+namespace 
+{
+    uint32_t MAX_FRAME_BUFFER_SIZE = 8192;
+}
+
 namespace Tempest 
 {
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpec& spec) : _framebufferSpec(spec)
@@ -12,11 +17,14 @@ namespace Tempest
     OpenGLFramebuffer::~OpenGLFramebuffer() 
     {
         glDeleteFramebuffers(1, &_rendererID);
+        glDeleteTextures(1, &_colourAttachment);
+        glDeleteTextures(1, &_depthAttachment);
     }
 
     void OpenGLFramebuffer::bind() 
     {
         glBindFramebuffer(GL_FRAMEBUFFER, _rendererID);
+        glViewport(0, 0, _framebufferSpec.width, _framebufferSpec.height);
     }
 
     void OpenGLFramebuffer::unbind() 
@@ -24,9 +32,23 @@ namespace Tempest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    const FramebufferSpec OpenGLFramebuffer::getFramebuffer() const
+    const FramebufferSpec OpenGLFramebuffer::getFramebufferSpec() const
     {
         return _framebufferSpec;
+    }
+
+    void OpenGLFramebuffer::resize(uint32_t width, uint32_t height)
+    {
+        if (width == 0 || height == 0 || width > MAX_FRAME_BUFFER_SIZE || height > MAX_FRAME_BUFFER_SIZE)
+        {
+            TEMPEST_WARN("Attempt to resize window to size {0} by {1}", width, height);
+            return;
+        }
+
+        _framebufferSpec.width = width;
+        _framebufferSpec.height = height;
+
+        invalidate();
     }
 
     uint32_t OpenGLFramebuffer::getColourAttachmentRendererID() const
@@ -36,6 +58,13 @@ namespace Tempest
 
     void OpenGLFramebuffer::invalidate()
     {
+        if (_rendererID)
+        {
+            glDeleteFramebuffers(1, &_rendererID);
+            glDeleteTextures(1, &_colourAttachment);
+            glDeleteTextures(1, &_depthAttachment);
+        }
+
         glCreateFramebuffers(1, &_rendererID);
         glBindFramebuffer(GL_FRAMEBUFFER, _rendererID);
 
@@ -50,7 +79,6 @@ namespace Tempest
         glCreateTextures(GL_TEXTURE_2D, 1, &_depthAttachment);
         glBindTexture(GL_TEXTURE_2D, _depthAttachment);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, _framebufferSpec.width, _framebufferSpec.height);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _framebufferSpec.width, _framebufferSpec.height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _depthAttachment, 0);
 

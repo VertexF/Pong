@@ -2,6 +2,7 @@
 #define OPENGL_FRAMEBUFFER_HDR
 
 #include "Tempest/Renderer/Framebuffer.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Tempest 
 {
@@ -14,7 +15,8 @@ namespace Tempest
         virtual void bind() override;
         virtual void unbind() override;
 
-        virtual const FramebufferSpec getFramebuffer() const override;
+        virtual const FramebufferSpec getFramebufferSpec() const override;
+        virtual void resize(uint32_t width, uint32_t height) override;
         virtual uint32_t getColourAttachmentRendererID() const override;
 
         void invalidate();

@@ -147,6 +147,12 @@ namespace Tempest
         _layerStack.pushOverlay(layer);
     }
 
+
+    ImGuiLayer* Application::getImGuiLayer()
+    {
+        return _imGuiLayer;
+    }
+
     void Application::close()
     {
         _running = false;

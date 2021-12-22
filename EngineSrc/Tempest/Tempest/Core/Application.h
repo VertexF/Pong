@@ -30,6 +30,8 @@ namespace Tempest
         inline static Application& get() { return *_instance; }
         inline Window& getWindow() const { return *_window;  }
 
+        ImGuiLayer* getImGuiLayer();
+
         void close();
     private:
         bool onWindowClosed(WindowClosedEvent &closed);

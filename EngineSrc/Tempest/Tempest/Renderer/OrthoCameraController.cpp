@@ -61,6 +61,15 @@ namespace Tempest
         dispatcher.dispatch<WindowResizeEvent>(std::bind(&OrthographicalCameraController::onWindowResized, this, std::placeholders::_1));
     }
 
+    void OrthographicalCameraController::onResize(float width, float height)
+    {
+        if (height != 0.f)
+        {
+            _aspectRation = width / height;
+            calculateView();
+        }
+    }
+
     void OrthographicalCameraController::calculateView() 
     {
         _camera.setProjection(-_aspectRation * _zoomLevel, _aspectRation * _zoomLevel, -_zoomLevel, _zoomLevel);
@@ -79,9 +88,7 @@ namespace Tempest
     bool OrthographicalCameraController::onWindowResized(WindowResizeEvent& e) 
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        _aspectRation = (float)e.getWidth() / (float)e.getHeight();
-        calculateView();
+        onResize(static_cast<float>(e.getWidth()), static_cast<float>(e.getHeight()));
         return false;
     }
 }
