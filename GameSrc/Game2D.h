@@ -25,21 +25,6 @@ namespace game
         bool onKeyReleased(Tempest::ReleasedKeyEvent& e);
     private:
         Tempest::scope<Tempest::OrthographicalCameraController> _cameraController;
-        Tempest::scope<Tempest::TextRenderer> _testText;
-
-        glm::vec4 _squareColour;
-        Tempest::ref<Tempest::Texture2D> _backgroundTexture;
-        Tempest::ref<Tempest::Texture2D> _transCheck;
-
-        uint32_t _spellSoundBuffer = 0;
-        uint32_t _magicFailSoundBuffer = 0;
-
-        Tempest::ref<Tempest::SoundDevice> _soundDevice;
-        Tempest::ref<Tempest::SoundBuffer> _soundBuffer;
-        Tempest::ref<Tempest::SoundSource> _mySource;
-
-        std::vector<float> _xPos;
-        std::vector<float> _yPos;
 
         float _posX;
         float _posY;
