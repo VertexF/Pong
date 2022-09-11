@@ -91,7 +91,7 @@ add_custom_command(TARGET TempestEditor POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/GameSrc/Resources"
         ${PROJECT_BINARY_DIR})
-
+     
 target_include_directories(TempestEditor PUBLIC ${TEMPEST_INCLUDE_DIR})
 target_link_libraries(TempestEditor PRIVATE Tempest)
 

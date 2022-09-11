@@ -5,7 +5,8 @@ namespace game
 {
     class Level 
     {
-    
+        public:
+            Level() = default;
     };
 }
 
