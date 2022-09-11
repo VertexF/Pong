@@ -25,6 +25,9 @@ namespace Tempest
 
         std::vector<Layer*>::reverse_iterator rbegin() { return _layers.rbegin(); }
         std::vector<Layer*>::reverse_iterator rend() { return _layers.rend(); }
+
+        bool isEmpty() const { return _layers.empty(); }
+        Layer* back();
     private:
         std::vector<Layer*> _layers;
         unsigned int _layerIteratorIndex = 0;

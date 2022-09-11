@@ -17,7 +17,7 @@
 
 namespace Tempest
 {
-    Application *Application::_instance = nullptr;
+    Application* Application::_instance = nullptr;
 
     //First we intialise the window which sets up all the stuff needed to run.
     //Then we set up callback functions to the on event function in this class.
@@ -31,10 +31,8 @@ namespace Tempest
         _window = Window::create(WindowProps(title));
         _window->setCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
-        Renderer::init();
-
         _imGuiLayer = new ImGuiLayer();
-        pushOverlay(_imGuiLayer);
+        Renderer::init();
     }
 
     Application::~Application()
@@ -47,7 +45,7 @@ namespace Tempest
     //The only event we need to dispatch is our windows close event.
     //This sends out a signal, that goes through the dispatcher and gets handled
     //by running the WindowClosedEvent function as a callback.
-    void Application::onEvent(Event &e) 
+    void Application::onEvent(Event& e)
     {
         TEMPEST_PROFILE_FUNCTION();
 
@@ -56,7 +54,7 @@ namespace Tempest
         eventDispatcher.dispatch<WindowResizeEvent>(std::bind(&Application::onWindowResize, this, std::placeholders::_1));
 
         //This is meant to go in reserve to handle events like keypresses.
-        for (auto it = _layerStack.rbegin(); it != _layerStack.rend(); it++) 
+        for (auto it = _layerStack.rbegin(); it != _layerStack.rend(); it++)
         {
             //When the event is handled we don't need to continue looping
             //through the layer stack.
@@ -93,9 +91,26 @@ namespace Tempest
                         layer->onUpdate(timestep);
                     }
                 }
+
+                {
+                    TEMPEST_PROFILE_SCOPE("State stack update");
+                    for (Layer* state : _stateStack)
+                    {
+                        if (state->isFinished()) 
+                        {
+                            popGameLayer(state);
+                            break;
+                        }
+                    }
+
+                    if (_stateStack.isEmpty()) 
+                    {
+                        close();
+                        break;
+                    }
+                }
             }
 
-            _imGuiLayer->begin();
             {
                 TEMPEST_PROFILE_SCOPE("Layer stack ImGui Update");
                 for (Layer* layer : _layerStack)
@@ -103,7 +118,11 @@ namespace Tempest
                     layer->onImGuiRender();
                 }
             }
-            _imGuiLayer->end();
+
+            {
+                TEMPEST_PROFILE_SCOPE("State stack ImGui Update");
+                _stateStack.back()->onImGuiRender();
+            }
 
             _window->onUpdate();
         }
@@ -111,7 +130,7 @@ namespace Tempest
 
     //This is what actually gets ran in the event dispatcher when the signal 
     //is sent on the event of a closed window.
-    bool Application::onWindowClosed(WindowClosedEvent &closed)
+    bool Application::onWindowClosed(WindowClosedEvent& closed)
     {
         _running = false;
         return true;
@@ -121,7 +140,7 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        if (resized.getWidth() == 0 || resized.getHeight() == 0) 
+        if (resized.getWidth() == 0 || resized.getHeight() == 0)
         {
             _minimized = true;
             return false;
@@ -133,22 +152,63 @@ namespace Tempest
         return false;
     }
 
-    void Application::pushLayer(Layer *layer)
+    void Application::pushLayer(Layer* layer)
     {
         TEMPEST_PROFILE_FUNCTION();
 
         _layerStack.pushLayer(layer);
     }
 
-    void Application::pushOverlay(Layer *layer)
+    void Application::pushOverlay(Layer* layer)
     {
         TEMPEST_PROFILE_FUNCTION();
 
         _layerStack.pushOverlay(layer);
     }
 
+    void Application::popLayer(Layer* layer)
+    {
+        TEMPEST_PROFILE_FUNCTION();
 
-    ImGuiLayer* Application::getImGuiLayer()
+        _layerStack.popLayer(layer);
+    }
+
+    void Application::popOverlay(Layer* layer) 
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        _stateStack.popOverlay(layer);
+    }
+
+    void Application::pushGameLayer(Layer* layer)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        _stateStack.pushLayer(layer);
+    }
+
+    void Application::pushGameOverlay(Layer* layer)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        _stateStack.pushOverlay(layer);
+    }
+
+    void Application::popGameLayer(Layer* layer)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        _stateStack.popLayer(layer);
+    }
+
+    void Application::popGameOverlay(Layer* layer)
+    {
+        TEMPEST_PROFILE_FUNCTION();
+
+        _layerStack.popOverlay(layer);
+    }
+
+    ImGuiLayer *Application::getImGuiLayer() 
     {
         return _imGuiLayer;
     }

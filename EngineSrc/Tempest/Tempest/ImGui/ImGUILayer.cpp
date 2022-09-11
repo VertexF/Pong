@@ -77,6 +77,11 @@ namespace Tempest
         }
     }
 
+    bool ImGuiLayer::isFinished() const 
+    {
+        return false;
+    }
+
     void ImGuiLayer::begin()
     {
         TEMPEST_PROFILE_FUNCTION();

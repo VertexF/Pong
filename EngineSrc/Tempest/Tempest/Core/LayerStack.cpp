@@ -56,4 +56,14 @@ namespace Tempest
             _layers.erase(it);
         }
     }
+
+    Layer* LayerStack::back()
+    {
+        if (isEmpty()) 
+        {
+            TEMPEST_CRITICAL("You are trying to get a layer of the game state stack when there is none.");
+            return nullptr;
+        }
+        return _layers.back();
+    }
 }

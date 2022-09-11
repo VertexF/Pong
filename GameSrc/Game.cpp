@@ -13,10 +13,10 @@ namespace game
     public:
         Game()
         {
-            pushLayer(new Game2D());
+            pushGameLayer(new Game2D());
         }
 
-        ~Game() {}
+        ~Game() = default;
     };
 }
 

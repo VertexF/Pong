@@ -106,7 +106,7 @@ namespace game
 
     bool Game2D::isFinished() const
     {
-        return true;
+        return false;
     }
 
     bool Game2D::onKeyPressed(Tempest::PressedKeyEvent& e)

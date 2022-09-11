@@ -20,6 +20,7 @@ namespace Tempest
         virtual void onUpdate(TimeStep timeStep) override;
         virtual void onEvent(Event& e) override;
         virtual void onImGuiRender() override;
+        virtual bool isFinished() const override;
     private:
         bool onKeyPressed(PressedKeyEvent& e);
         bool onKeyReleased(ReleasedKeyEvent& e);

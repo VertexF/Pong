@@ -223,8 +223,11 @@ namespace Tempest
         ImGui::PopStyleVar();
 
         ImGui::End();
+    }
 
-
+    bool EditorLayer::isFinished() const 
+    {
+        return false;
     }
 
     bool EditorLayer::onKeyPressed(PressedKeyEvent& e)
