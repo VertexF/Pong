@@ -32,6 +32,7 @@ namespace Tempest
         _window->setCallbackFunction(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
         _imGuiLayer = new ImGuiLayer();
+        pushLayer(_imGuiLayer);
         Renderer::init();
     }
 
@@ -55,6 +56,19 @@ namespace Tempest
 
         //This is meant to go in reserve to handle events like keypresses.
         for (auto it = _layerStack.rbegin(); it != _layerStack.rend(); it++)
+        {
+            //When the event is handled we don't need to continue looping
+            //through the layer stack.
+            if (e.isHandled)
+            {
+                break;
+            }
+
+            (*it)->onEvent(e);
+        }
+
+        //This is meant to go in reserve to handle events like keypresses.
+        for (auto it = _stateStack.rbegin(); it != _stateStack.rend(); it++)
         {
             //When the event is handled we don't need to continue looping
             //through the layer stack.
@@ -108,9 +122,12 @@ namespace Tempest
                         close();
                         break;
                     }
+
+                    _stateStack.back()->onUpdate(timestep);
                 }
             }
 
+            _imGuiLayer->begin();
             {
                 TEMPEST_PROFILE_SCOPE("Layer stack ImGui Update");
                 for (Layer* layer : _layerStack)
@@ -123,6 +140,7 @@ namespace Tempest
                 TEMPEST_PROFILE_SCOPE("State stack ImGui Update");
                 _stateStack.back()->onImGuiRender();
             }
+            _imGuiLayer->end();
 
             _window->onUpdate();
         }
@@ -177,7 +195,7 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _stateStack.popOverlay(layer);
+        _layerStack.popOverlay(layer);
     }
 
     void Application::pushGameLayer(Layer* layer)
@@ -205,7 +223,7 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _layerStack.popOverlay(layer);
+        _stateStack.popOverlay(layer);
     }
 
     ImGuiLayer *Application::getImGuiLayer() 

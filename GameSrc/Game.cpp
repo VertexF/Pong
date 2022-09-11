@@ -4,6 +4,7 @@
 #include "Tempest/Core/EntryPoint.h"
 
 #include "Game2D.h"
+#include "LoadingLayer.h"
 
 namespace game
 {
@@ -14,9 +15,10 @@ namespace game
         Game()
         {
             pushGameLayer(new Game2D());
+            pushGameLayer(new LoadingLayer());
         }
 
-        ~Game() = default;
+        virtual ~Game() = default;
     };
 }
 

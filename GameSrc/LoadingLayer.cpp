@@ -1,5 +1,5 @@
 #include "PreComp.h"
-#include "Game2D.h"
+#include "LoadingLayer.h"
 
 #include "GameState.h"
 #include "LoadingState.h"
@@ -14,7 +14,7 @@
 
 namespace game
 {
-    Game2D::Game2D() : Layer("Game")
+    LoadingLayer::LoadingLayer() : Layer("Loading")
     {
         TEMPEST_PROFILE_FUNCTION();
         _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
@@ -22,44 +22,28 @@ namespace game
         _posX = 0.f;
         _posY = 0.f;
 
-        GAME_STATE.pushState(std::make_shared<InitState>(InitState()));
+        finished = false;
     }
 
-    void Game2D::onAttach()
+    void LoadingLayer::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        TEMPEST_INFO("We are in the main game layer.");
 
         _cameraController->setZoomLevel(5.f);
     }
 
-    void Game2D::onDetach()
+    void LoadingLayer::onDetach()
     {
         TEMPEST_PROFILE_FUNCTION();
     }
 
-    void Game2D::onUpdate(Tempest::TimeStep timeStep)
+    void LoadingLayer::onUpdate(Tempest::TimeStep timeStep)
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        //switch (GAME_STATE.getCurrentState())
-        //{
-        //case CLASS_STATE::INIT_STATE:
-        //    GAME_STATE.switchState(std::make_shared<LoadingState>(LoadingState()));
-        //    break;
-        //case CLASS_STATE::LOADING_STATE:
-        //    GAME_STATE.switchState(std::make_shared<MainState>(MainState()));
-        //    break;
-        //case CLASS_STATE::MAIN_STATE:
-        //    break;
-        //}
-
-        //GAME_STATE.update();
-
         _cameraController->onUpdate(timeStep);
 
-        Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
+        Tempest::RendererCommands::setClearColour({ 0.9f, 0.9f, 0.2f, 1.f });
         Tempest::RendererCommands::clear();
 
         if (Tempest::Input::isKeyPressed(TEMP_KEY_W)) 
@@ -82,6 +66,11 @@ namespace game
             _posX += 1.5f * timeStep;
         }
 
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_SPACE))
+        {
+            finished = true;
+        }
+
         _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
 
         Tempest::Renderer2D::resetStats();
@@ -90,31 +79,31 @@ namespace game
         Tempest::Renderer2D::endScene();
     }
 
-    void Game2D::onEvent(Tempest::Event& e)
+    void LoadingLayer::onEvent(Tempest::Event& e)
     {
         _cameraController->onEvent(e);
 
         Tempest::EventDispatcher dispatcher(e);
-        dispatcher.dispatch<Tempest::PressedKeyEvent>(std::bind(&Game2D::onKeyPressed, this, std::placeholders::_1));
-        dispatcher.dispatch<Tempest::ReleasedKeyEvent>(std::bind(&Game2D::onKeyReleased, this, std::placeholders::_1));
+        dispatcher.dispatch<Tempest::PressedKeyEvent>(std::bind(&LoadingLayer::onKeyPressed, this, std::placeholders::_1));
+        dispatcher.dispatch<Tempest::ReleasedKeyEvent>(std::bind(&LoadingLayer::onKeyReleased, this, std::placeholders::_1));
     }
 
-    void Game2D::onImGuiRender()
+    void LoadingLayer::onImGuiRender()
     {
         TEMPEST_PROFILE_FUNCTION();
     }
 
-    bool Game2D::isFinished() const
+    bool LoadingLayer::isFinished() const
+    {
+        return finished;
+    }
+
+    bool LoadingLayer::onKeyPressed(Tempest::PressedKeyEvent& e)
     {
         return false;
     }
 
-    bool Game2D::onKeyPressed(Tempest::PressedKeyEvent& e)
-    {
-        return false;
-    }
-
-    bool Game2D::onKeyReleased(Tempest::ReleasedKeyEvent& e) 
+    bool LoadingLayer::onKeyReleased(Tempest::ReleasedKeyEvent& e) 
     {
         return false;
     }

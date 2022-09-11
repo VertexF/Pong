@@ -22,7 +22,7 @@ namespace game
         _posX = 0.f;
         _posY = 0.f;
 
-        GAME_STATE.pushState(std::make_shared<InitState>(InitState()));
+        //GAME_STATE.pushState(std::make_shared<InitState>(InitState()));
     }
 
     void Game2D::onAttach()
@@ -59,7 +59,7 @@ namespace game
 
         _cameraController->onUpdate(timeStep);
 
-        Tempest::RendererCommands::setClearColour({ 0.2f, 0.2f, 0.2f, 1.f });
+        Tempest::RendererCommands::setClearColour({ 0.4f, 0.4f, 0.4f, 1.f });
         Tempest::RendererCommands::clear();
 
         if (Tempest::Input::isKeyPressed(TEMP_KEY_W)) 
@@ -106,7 +106,7 @@ namespace game
 
     bool Game2D::isFinished() const
     {
-        return true;
+        return false;
     }
 
     bool Game2D::onKeyPressed(Tempest::PressedKeyEvent& e)

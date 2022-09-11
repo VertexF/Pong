@@ -1,5 +1,5 @@
-#ifndef GAME_2D_HDR
-#define GAME_2D_HDR
+#ifndef LOADING_LAYER_HDR
+#define LOADING_LAYER_HDR
 
 #include <Tempest.h>
 #include <ImGui.h>
@@ -9,11 +9,11 @@
 
 namespace game
 {
-    class Game2D : public Tempest::Layer
+    class LoadingLayer : public Tempest::Layer
     {
     public:
-        Game2D();
-        virtual ~Game2D() = default;
+        LoadingLayer();
+        virtual ~LoadingLayer() = default;
 
         virtual void onAttach() override;
         virtual void onDetach() override;
@@ -29,7 +29,9 @@ namespace game
 
         float _posX;
         float _posY;
+
+        bool finished = false;
     };
 }
 
-#endif //!GAME_2D_HDR
+#endif //!LOADING_LAYER_HDR
