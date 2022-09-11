@@ -1,11 +1,6 @@
 #include "PreComp.h"
 #include "LoadingLayer.h"
 
-#include "GameState.h"
-#include "LoadingState.h"
-#include "InitState.h"
-#include "MainState.h"
-#include "GlobalState.h"
 #include "Global.h"
 
 #include <glm/gtc/type_ptr.hpp>

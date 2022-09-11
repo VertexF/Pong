@@ -14,6 +14,8 @@ namespace game
     public:
         Game()
         {
+            //TODO: Workout away to add new things to the game stack, when an old layer is deleted.
+            //Instead of adding them all to the stack all at once, might save RAM and startup time.
             pushGameLayer(new Game2D());
             pushGameLayer(new LoadingLayer());
         }

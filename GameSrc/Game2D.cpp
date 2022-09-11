@@ -1,11 +1,6 @@
 #include "PreComp.h"
 #include "Game2D.h"
 
-#include "GameState.h"
-#include "LoadingState.h"
-#include "InitState.h"
-#include "MainState.h"
-#include "GlobalState.h"
 #include "Global.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -21,8 +16,6 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
-
-        //GAME_STATE.pushState(std::make_shared<InitState>(InitState()));
     }
 
     void Game2D::onAttach()
@@ -42,20 +35,6 @@ namespace game
     void Game2D::onUpdate(Tempest::TimeStep timeStep)
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        //switch (GAME_STATE.getCurrentState())
-        //{
-        //case CLASS_STATE::INIT_STATE:
-        //    GAME_STATE.switchState(std::make_shared<LoadingState>(LoadingState()));
-        //    break;
-        //case CLASS_STATE::LOADING_STATE:
-        //    GAME_STATE.switchState(std::make_shared<MainState>(MainState()));
-        //    break;
-        //case CLASS_STATE::MAIN_STATE:
-        //    break;
-        //}
-
-        //GAME_STATE.update();
 
         _cameraController->onUpdate(timeStep);
 
