@@ -1,0 +1,23 @@
+#ifndef BACKGROUND_HDR
+#define BACKGROUND_HDR
+
+#include <string>
+
+#include <Tempest.h>
+
+namespace game 
+{
+    class Background 
+    {
+    public:
+        Background() = default;
+        Background(const std::string& path);
+
+        void createTexture(const std::string& path);
+        Tempest::ref<Tempest::Texture2D> getTexture() const;
+    private:
+        Tempest::ref<Tempest::Texture2D> _backgroundTexture;
+    };
+}
+
+#endif // !BACKGROUND_HDR

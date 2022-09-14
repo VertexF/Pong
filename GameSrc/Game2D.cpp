@@ -21,10 +21,7 @@ namespace game
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        TEMPEST_INFO("We are in the main game layer.");
-
-        _cameraController->setZoomLevel(5.f);
+        _cameraController->setZoomLevel(4.5f);
     }
 
     void Game2D::onDetach()
@@ -66,6 +63,9 @@ namespace game
         Tempest::Renderer2D::resetStats();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
+
+        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, GAME_THEME.getBackground(0)->getTexture());
+
         Tempest::Renderer2D::endScene();
     }
 

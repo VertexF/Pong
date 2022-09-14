@@ -17,6 +17,7 @@ namespace game
         _posX = 0.f;
         _posY = 0.f;
 
+        GAME_THEME.appendBackgrounds(std::make_shared<Background>("D:/Games Development/MarioPort-Part1/resources/smb3_bg/blocks.png"));
         finished = false;
     }
 
