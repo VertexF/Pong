@@ -15,6 +15,13 @@ namespace game
 
         void createTexture(const std::string& path);
         Tempest::ref<Tempest::Texture2D> getTexture() const;
+
+        enum class BackgroundTiling
+        {
+            BACKGROUND_HORIZONTAL,
+            BACKGROUND_VERTICAL,
+            BACKGROUND_ALL,
+        };
     private:
         Tempest::ref<Tempest::Texture2D> _backgroundTexture;
     };

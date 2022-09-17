@@ -19,6 +19,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(TEMPEST_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/EngineSrc/Tempest")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCE})
 
+set(RAPID_XML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/EngineSrc/Tempest/vender/rapidxml-1.13")
+
 add_subdirectory(EngineSrc/Tempest)
 
 add_executable(Game ${GAME_SOURCE})
@@ -51,7 +53,7 @@ add_custom_command(TARGET Game POST_BUILD
         "${CMAKE_SOURCE_DIR}/GameSrc/Resources"
         ${PROJECT_BINARY_DIR})
 
-target_include_directories(Game PUBLIC ${TEMPEST_INCLUDE_DIR})
+target_include_directories(Game PUBLIC ${TEMPEST_INCLUDE_DIR} ${RAPID_XML_DIR})
 target_link_libraries(Game PRIVATE Tempest)
 
 ########################EDITOR################################
