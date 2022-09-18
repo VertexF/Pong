@@ -152,9 +152,17 @@ namespace game
                 }
             }
 
+            rapidxml::xml_attribute<>* timeAttr = node->first_attribute("time");
+            int time = 1;
+            if(timeAttr != nullptr) 
+            {
+                time = std::atoi(timeAttr->value());
+            }
+
             //Skipping everything else that turns up in the frame tag apart from the texture image location.
+            std::vector<Tempest::ref<Tempest::Texture2D>> _textures;
             std::string textureName;
-            for (rapidxml::xml_node<>* frameNode = node->first_node("frame"); frameNode != nullptr; frameNode->next_sibling("frame"))
+            for (rapidxml::xml_node<>* frameNode = node->first_node("frame"); frameNode != nullptr; frameNode = frameNode->next_sibling("frame"))
             {
                 rapidxml::xml_attribute<>* imageAttr = frameNode->first_attribute("image");
                 if (imageAttr != nullptr) 
@@ -162,7 +170,7 @@ namespace game
                     textureName = getResourceFileName(imageAttr->value());
                     //We CANNOT handle animation at all, concepts like frames need to added into the game engine later.
                     //EVERY background is just a static background picture.
-                    break;
+                    _textures.emplace_back(Tempest::Texture2D::create(textureName));
                 }
                 else 
                 {
@@ -170,7 +178,17 @@ namespace game
                 }
             }
 
-            std::shared_ptr<Background> background = std::make_shared<Background>(textureName);
+            ////TexCoords
+            //glm::vec2 coords = {0, 0};
+            //glm::vec2 cellSize = {0, 0};
+            ////TextureSize
+            //glm::vec2 spriteSize = {0, 0};
+            std::shared_ptr<Background> background = std::make_shared<Background>();
+            for (auto texture : _textures)
+            {
+                background->addFrame(texture, { 0, 0 }, { texture->getWidth(), texture->getHeight() }, {1, 1}, time);
+            }
+
             std::shared_ptr<Resource> resource = std::make_shared<Resource>();
             resource->type = RESOURCE_BACKGROUND;
             resource->background = background;

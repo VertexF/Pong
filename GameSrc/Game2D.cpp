@@ -17,12 +17,14 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
+        //_frameCount = 0;
     }
 
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_cave_theme");
+        _frameCount = 0;
+        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_ice_cave_theme");
         _cameraController->setZoomLevel(4.5f);
     }
 
@@ -66,9 +68,17 @@ namespace game
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
 
-        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getTexture());
+        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
+        Tempest::Renderer2D::drawQuad({ 16, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
+        Tempest::Renderer2D::drawQuad({ 32, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
 
         Tempest::Renderer2D::endScene();
+
+        if (_frameCount >= 40) 
+        {
+            _frameCount = 0;
+        }
+        _frameCount++;
     }
 
     void Game2D::onEvent(Tempest::Event& e)

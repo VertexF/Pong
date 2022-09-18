@@ -32,6 +32,7 @@ namespace game
 
         float _posX;
         float _posY;
+        int _frameCount;
 
         std::shared_ptr<LevelTheme> _levelTheme;
     };
