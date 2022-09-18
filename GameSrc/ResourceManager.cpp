@@ -15,7 +15,7 @@ namespace
     //MAJOR ISSUE! This only support textures right now!
     std::string getResourceFileName(const std::string& relativeFileName) 
     {
-        return "Assets/Textures/" + relativeFileName;
+        return "Assets/" + relativeFileName;
     }
 }
 
@@ -23,38 +23,17 @@ namespace game
 {
     //------------------Public Functions--------------------------------------
     ResourceManager::ResourceManager() :
-        _isMainResourceManager(true),
-        _parent(std::make_unique<ResourceManager>())
+        _isMainResourceManager(true)
     {
-    }
-
-    ResourceManager::ResourceManager(const std::shared_ptr<ResourceManager>& parent) :
-        _isMainResourceManager(false)
-    {
-        //We need to copy around the parent because multiple groups will come from the same parent.
-        _parent = parent;
     }
 
     ResourceManager::~ResourceManager() 
     {
-        TEMPEST_INFO("Release all resources");
-        for (auto resource : _resources) 
-        {
-            switch (resource.second.type) 
-            {
-            case RESOURCE_BACKGROUND:
-                delete resource.second.background;
-                break;
-            case RESOURCE_LEVELTHEME:
-                delete resource.second.levelTheme;
-                break;
-            }
-        }
     }
 
-    const Background* ResourceManager::getBackground(const std::string& name) const 
+    const std::shared_ptr<Background> ResourceManager::getBackground(const std::string& name) const 
     {
-        const ResourceManager::Resource* resource = std::move(getResource(name));
+        std::shared_ptr<ResourceManager::Resource> resource = getResource(name);
         if (resource == nullptr || resource->type != RESOURCE_BACKGROUND)
         {
             TEMPEST_INFO("Warning resource not found {0} is return a nullptr", name);
@@ -63,9 +42,9 @@ namespace game
         return resource->background;
     }
 
-    const LevelTheme* ResourceManager::getLevelTheme(const std::string& name) const 
+    const std::shared_ptr<LevelTheme> ResourceManager::getLevelTheme(const std::string& name) const
     {
-        const ResourceManager::Resource* resource = std::move(getResource(name));
+        std::shared_ptr<ResourceManager::Resource> resource = getResource(name);
         if (resource == nullptr || resource->type != RESOURCE_LEVELTHEME)
         {
             TEMPEST_INFO("Warning resource not found {0} is return a nullptr", name);
@@ -103,11 +82,14 @@ namespace game
     }
 
     //------------------Private Functions--------------------------------------
-    ResourceManager::ResourceManager(const ResourceManager& parent) 
+    ResourceManager::ResourceManager(const std::shared_ptr<ResourceManager>& parent) :
+        _isMainResourceManager(false)
     {
+        //We need to copy around the parent because multiple groups will come from the same parent.
+        _parent = parent;
     }
 
-    const ResourceManager::Resource* ResourceManager::getResource(const std::string& name) const
+    const std::shared_ptr<ResourceManager::Resource> ResourceManager::getResource(const std::string& name) const
     {
         auto it = _resources.find(name);
         if (it == _resources.end() && _parent == nullptr)
@@ -116,11 +98,11 @@ namespace game
         }
         else if (_parent != nullptr)
         {
-            _parent->getResource(name);
+            return _parent->getResource(name);
         }
         else
         {
-            return &it->second;
+            return it->second;
         }
     }
 
@@ -129,7 +111,7 @@ namespace game
         //Enumerate backgrounds
         TEMPEST_INFO("Loading backgrounds...");
 
-        for (rapidxml::xml_node<>* node = root->first_node("background"); node != nullptr; node->next_sibling("background"))
+        for (rapidxml::xml_node<>* node = root->first_node("background"); node != nullptr; node = node->next_sibling("background"))
         {
             //Check that it has and id
             rapidxml::xml_attribute<>* idAttr = node->first_attribute("id");
@@ -188,24 +170,22 @@ namespace game
                 }
             }
 
-            Background* background = new Background(textureName);
-            Resource resource;
-            resource.type = RESOURCE_BACKGROUND;
-            resource.background = background;
+            std::shared_ptr<Background> background = std::make_shared<Background>(textureName);
+            std::shared_ptr<Resource> resource = std::make_shared<Resource>();
+            resource->type = RESOURCE_BACKGROUND;
+            resource->background = background;
             _resources[idAttr->value()] = resource;
 
             TEMPEST_INFO("Loaded background {0}", idAttr->value());
         }
     }
 
-    void ResourceManager::loadLevelThemes(rapidxml::xml_node<>* root)
-    {
-    }
-
     void ResourceManager::loadGroups(rapidxml::xml_node<>* root)
     {
         //Enumerate group
-        for (rapidxml::xml_node<>* node = root->first_node("group"); node != nullptr; node->next_sibling("group"))
+        TEMPEST_INFO("Loading Groups...");
+
+        for (rapidxml::xml_node<>* node = root->first_node("group"); node != nullptr; node = node->next_sibling("group"))
         {
             rapidxml::xml_attribute<>* idAttr = node->first_attribute("id");
             if (idAttr == nullptr)
@@ -239,11 +219,11 @@ namespace game
                 continue;
             }
 
-            std::shared_ptr<ResourceManager> group = std::make_shared<ResourceManager>(*parent);
+            std::shared_ptr<ResourceManager> group = std::make_shared<ResourceManager>(parent);
             _groups.insert(it, std::pair<std::string, std::shared_ptr<ResourceManager>>(name, group));
 
             //Add all the key-value pairs to the child
-            for (rapidxml::xml_node<>* res = node->first_node("resource"); res != nullptr; res = node->next_sibling("resource"))
+            for (rapidxml::xml_node<>* res = node->first_node("resource"); res != nullptr; res = res->next_sibling("resource"))
             {
                 //Check that is has a key-value pair specified
                 rapidxml::xml_attribute<>* keyAttr = res->first_attribute("key");
@@ -261,8 +241,8 @@ namespace game
 
                 //Check that the key is unique and that the value exists
                 std::string key = keyAttr->value();
-                auto it = group->_resources.find(key);
-                if (it != group->_resources.end()) 
+                auto iter = group->_resources.find(key);
+                if (iter != group->_resources.end()) 
                 {
                     TEMPEST_WARN("Resource group {0} specified a key that was already in use {1}", name, key);
                     continue;
@@ -271,27 +251,142 @@ namespace game
                 if (valueAttr != nullptr) 
                 {
                     std::string value = valueAttr->value();
-                    it = _resources.find(value);
-                    if (it == _resources.end()) 
+                    iter = _resources.find(value);
+                    if (iter == _resources.end()) 
                     {
                         TEMPEST_WARN("Resource group {0} specified a value for a resource that does not exist: {1}", name, value);
                         continue;
                     }
 
                     //Create the link to the resource
-                    const Resource* resource = getResource(value);
-                    Resource newResource(*resource);
+                    const std::shared_ptr<Resource> resource = getResource(value);
+                    std::shared_ptr<Resource> newResource = resource;
                     group->_resources[key] = newResource;
 
                     TEMPEST_INFO("Added resource key-value pair: {0} -> {1}", key, value);
                 }
                 else 
                 {
-                    //IMPLEMENT WITH ANIMATIONED AND TILES.
+                    //TODO:
+                    //IMPLEMENT WITH ANIMATIONS AND TILES.
                 }
             }
 
             TEMPEST_INFO("Added resource group {0}", name);
+        }
+    }
+
+    void ResourceManager::loadLevelThemes(rapidxml::xml_node<>* root)
+    {
+        //Enumerate themes
+        TEMPEST_INFO("Loading Themes...");
+        for (rapidxml::xml_node<>* node = root->first_node("theme"); node != nullptr; node = node->next_sibling("theme"))
+        {
+            //Check that it has an id
+            rapidxml::xml_attribute<>* idAttr = node->first_attribute("id");
+            if (idAttr == nullptr) 
+            {
+                TEMPEST_WARN("Ingoring a theme that did not have an id attribute");
+                continue;
+            }
+
+            //Check for duplicates
+            auto it = _resources.find(idAttr->value());
+            if (it != _resources.end()) 
+            {
+                TEMPEST_WARN("Duplicate resource {0} found. It will be ignored", idAttr->value());
+                continue;
+            }
+
+            std::shared_ptr<LevelTheme> theme = std::make_shared<LevelTheme>();
+            std::string name = idAttr->value();
+
+            //Load entites. 
+            //NOTE: This doesn't do anything right now but I will still build logic.
+            for (rapidxml::xml_node<>* entity = node->first_node("entity"); entity != nullptr; entity = entity->next_sibling("entity"))
+            {
+                rapidxml::xml_attribute<>* id = entity->first_attribute("id");
+                rapidxml::xml_attribute<>* group = entity->first_attribute("group");
+
+                if (id == nullptr || group == nullptr) 
+                {
+                    TEMPEST_WARN("Theme {0} had an entity specified without an id or group attribute. This theme will be ignored", name);
+                    continue;
+                }
+
+                auto iter = _groups.find(group->value());
+                if (iter == _groups.end()) 
+                {
+                    TEMPEST_WARN("Theme {0} had an entity with an invalid group named {1}. This theme will be ignored", name, group->value());
+                    continue;
+                }
+
+                //Define the interface before you just uncomment this code and run with it.
+                //ResourceManager* resourceGroup = it->second;
+                //theme->addEntityType(id->value(), resourceGroup);
+            }
+
+            for (rapidxml::xml_node<>* entity = node->first_node("resource"); entity != nullptr; entity = entity->next_sibling("resource")) 
+            {
+                rapidxml::xml_attribute<>* id = entity->first_attribute("id");
+
+                if (id == nullptr)
+                {
+                    TEMPEST_WARN("Theme {0} had an entity specified without an id or group attribute. This theme will be ignored", name);
+                    continue;
+                }
+
+                const std::shared_ptr<Resource> resource = getResource(id->value());
+                if (resource == nullptr)
+                {
+                    TEMPEST_WARN("Theme {0} had a resource with an invalid id specified {1}. This theme will be ignored", name, id->value());
+                    continue;
+                }
+
+                if (resource->type == RESOURCE_BACKGROUND) 
+                {
+                    theme->appendBackgrounds(std::move(resource->background));
+                }
+                //ADD MUSIC HERE if else here.
+                else 
+                {
+                    TEMPEST_WARN("Theme {0} had a resource {1} that wasn't a background or music", name, id->value());
+                    continue;
+                }
+
+                //Check if a parent was specified
+                rapidxml::xml_attribute<>* parentAttr = node->first_attribute("parent");
+                if(parentAttr != nullptr)
+                {
+                    //Not tested parently
+                    //Find the parent theme.
+                    std::string parentName = parentAttr->value();
+                    const std::shared_ptr<LevelTheme> parent = getLevelTheme(parentName);
+                    if (parent == nullptr) 
+                    {
+                        TEMPEST_WARN("Theme {0} specified a parent theme {1} that did not exist.", name, parentName);
+                    }
+                    else 
+                    {
+                        //Find anything that the parent has that we don't have to copy it.
+                        //theme->inherit(*parent);
+                    }
+                }
+                else if (name.compare("default_theme") != 0)
+                {
+                    //By default inherit default_theme
+                    //theme->inherit(*getLevelTheme("default_theme"));
+                }
+            }
+
+            //Create the resource
+            std::shared_ptr<Resource> resource = std::make_shared<Resource>();
+            resource->type = RESOURCE_LEVELTHEME;
+            resource->levelTheme = theme;
+            _resources[name] = resource;
+            _levelTheme.emplace_back(theme);
+
+            TEMPEST_INFO("Loaded theme {0}.", name);
         }
     }
 
@@ -310,21 +405,21 @@ namespace game
         //Load any resource file imports specified in the file.
         for (rapidxml::xml_node<>* node = root->first_node("import"); node != nullptr; node = node->next_sibling("import"))
         {
-            rapidxml::xml_attribute<>* fileAttr = node->first_attribute("file");
-            if (fileAttr == nullptr) 
+            rapidxml::xml_attribute<>* fileAttribute = node->first_attribute("file");
+            if (fileAttribute == nullptr)
             {
                 //There isn't a file to load.
                 continue;
             }
 
-            std::string fileName = getResourceFileName(fileAttr->value());
+            std::string recuriveFileName = getResourceFileName(fileAttribute->value());
             try 
             {
-                loadResourcesFromFile(fileName);
+                loadResourcesFromFile(recuriveFileName);
             }
             catch (const std::exception &e) 
             {
-                TEMPEST_ERROR("Failed to load resources from file {0} The expection reads {1}", fileName, e.what());
+                TEMPEST_ERROR("Failed to load resources from file {0} The expection reads {1}", recuriveFileName, e.what());
             }
         }
 

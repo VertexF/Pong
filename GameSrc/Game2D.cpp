@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 #include <cmath>
+#include <vector>
 
 namespace game
 {
@@ -21,6 +22,7 @@ namespace game
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
+        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_cave_theme");
         _cameraController->setZoomLevel(4.5f);
     }
 
@@ -64,7 +66,7 @@ namespace game
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
 
-        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, GAME_THEME.getBackground(0)->getTexture());
+        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getTexture());
 
         Tempest::Renderer2D::endScene();
     }

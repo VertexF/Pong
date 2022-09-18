@@ -88,6 +88,7 @@ namespace Tempest
         TEMPEST_PROFILE_FUNCTION();
 
         _running = true;
+        _stateStack.back()->onAttach();
         while (_running)
         {
             TEMPEST_PROFILE_SCOPE("Main run loop");
@@ -113,6 +114,10 @@ namespace Tempest
                         if (state->isFinished()) 
                         {
                             popGameLayer(state);
+                            if (_stateStack.isEmpty() == false)
+                            {
+                                _stateStack.back()->onAttach();
+                            }
                             break;
                         }
                     }
@@ -202,14 +207,14 @@ namespace Tempest
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _stateStack.pushLayer(layer);
+        _stateStack.pushGameLayer(layer);
     }
 
     void Application::pushGameOverlay(Layer* layer)
     {
         TEMPEST_PROFILE_FUNCTION();
 
-        _stateStack.pushOverlay(layer);
+        _stateStack.pushGameOverlay(layer);
     }
 
     void Application::popGameLayer(Layer* layer)

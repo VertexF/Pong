@@ -11,6 +11,7 @@ namespace game
     {
     public:
         Background() = default;
+        ~Background() = default;
         Background(const std::string& path);
 
         void createTexture(const std::string& path);

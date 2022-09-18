@@ -57,6 +57,22 @@ namespace Tempest
         }
     }
 
+    void LayerStack::pushGameLayer(Layer* layer)
+    {
+        _layers.emplace(_layers.begin() + _layerIteratorIndex, layer);
+        _layerIteratorIndex++;
+    }
+
+    void LayerStack::pushGameOverlay(Layer* overlay)
+    {
+        _layers.emplace_back(overlay);
+    }
+
+    void LayerStack::attachTopLayer() 
+    {
+        _layers.back()->onAttach();
+    }
+
     Layer* LayerStack::back()
     {
         if (isEmpty()) 

@@ -20,6 +20,10 @@ namespace Tempest
         void popLayer(Layer* layer);
         void popOverlay(Layer* overlay);
 
+        void pushGameLayer(Layer* layer);
+        void pushGameOverlay(Layer* overlay);
+        void attachTopLayer();
+
         std::vector<Layer*>::iterator begin() { return _layers.begin(); }
         std::vector<Layer*>::iterator end() { return _layers.end(); }
 

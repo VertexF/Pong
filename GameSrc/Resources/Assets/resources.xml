@@ -2,10 +2,10 @@
 <resources>
 
 <!-- Music -->
-<import file="music.xml" />
+<!-- <import file="music.xml" /> -->
 
 <!-- Sounds -->
-<import file="sounds.xml" />
+<!-- <import file="sounds.xml" /> -->
 
 <!-- Fonts -->
 <font id="font_main" file="Textures/smb3_font.png" width="8" height="8" >
@@ -75,7 +75,7 @@
 	<frame x="30" w="10" />
 </animation>
 
-<import file="mario.xml" />
+<!-- <import file="mario.xml" /> -->
 
 <animation id="goomba">
 	<frame image="Textures/smb3_enemies.png" x="15" y="4" w="16" h="16" time="8"/>
