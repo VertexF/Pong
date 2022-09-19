@@ -724,9 +724,9 @@
 </background>
 
 <background id="dark_hills_bg" tiling="horizontal" time="10">
-	<!-- <frame image="Textures/smb3_bg/dark_hills_1.png" /> -->
-	<!-- <frame image="Textures/smb3_bg/dark_hills_2.png" /> -->
-	<!-- <frame image="Textures/smb3_bg/dark_hills_3.png" /> -->
+	<frame image="Textures/smb3_bg/dark_hills_1.png" />
+	<frame image="Textures/smb3_bg/dark_hills_2.png" />
+	<frame image="Textures/smb3_bg/dark_hills_3.png" />
 	<frame index="1" />
 </background>
 

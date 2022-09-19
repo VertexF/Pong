@@ -168,8 +168,6 @@ namespace game
                 if (imageAttr != nullptr) 
                 {
                     textureName = getResourceFileName(imageAttr->value());
-                    //We CANNOT handle animation at all, concepts like frames need to added into the game engine later.
-                    //EVERY background is just a static background picture.
                     _textures.emplace_back(Tempest::Texture2D::create(textureName));
                 }
                 else 
@@ -178,15 +176,10 @@ namespace game
                 }
             }
 
-            ////TexCoords
-            //glm::vec2 coords = {0, 0};
-            //glm::vec2 cellSize = {0, 0};
-            ////TextureSize
-            //glm::vec2 spriteSize = {0, 0};
             std::shared_ptr<Background> background = std::make_shared<Background>();
             for (auto texture : _textures)
             {
-                background->addFrame(texture, { 0, 0 }, { texture->getWidth(), texture->getHeight() }, {1, 1}, time);
+                background->addFrame(texture, { 0, 0 }, { texture->getWidth(), texture->getHeight() }, { 1, 1 }, time);
             }
 
             std::shared_ptr<Resource> resource = std::make_shared<Resource>();

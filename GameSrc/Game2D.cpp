@@ -23,8 +23,8 @@ namespace game
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
+        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_dead_grass_theme");
         _frameCount = 0;
-        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_ice_cave_theme");
         _cameraController->setZoomLevel(4.5f);
     }
 
@@ -74,7 +74,7 @@ namespace game
 
         Tempest::Renderer2D::endScene();
 
-        if (_frameCount >= 40) 
+        if (_frameCount >= _levelTheme->getBackground(0)->getAnimation()->getTotalFrames()) 
         {
             _frameCount = 0;
         }
