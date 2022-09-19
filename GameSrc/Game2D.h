@@ -4,9 +4,6 @@
 #include <Tempest.h>
 #include <ImGui.h>
 
-#include "Global.h"
-#include "LevelTheme.h"
-
 #include "Tempest/Events/Event.h"
 #include "Tempest/Events/KeyEvents.h"
 
@@ -32,9 +29,6 @@ namespace game
 
         float _posX;
         float _posY;
-        int _frameCount;
-
-        std::shared_ptr<LevelTheme> _levelTheme;
     };
 }
 

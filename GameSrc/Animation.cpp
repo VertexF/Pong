@@ -25,13 +25,19 @@ namespace game
 
     const Tempest::ref<Tempest::SubTexture2D> Animation::getFrame(unsigned int frameNumber)
     {
-        int index = static_cast<int>(frameNumber / _duration);
-        if (_frames.size() == index)
+        if (_duration > 1)
         {
-            index = 0;
+            int index = static_cast<int>(frameNumber / _duration);
+            if (_frames.size() == index)
+            {
+                index = 0;
+            }
+            return _frames.at(index);
         }
-
-        return _frames.at(index);
+        else 
+        {
+            return _frames.at(0);
+        }
     }
 
     const Tempest::ref<Tempest::SubTexture2D> Animation::getFrameBySequence(unsigned int sequence) const

@@ -19,7 +19,7 @@ namespace game
 
         void appendBackgrounds(std::shared_ptr<Background>&& background);
         std::vector<std::shared_ptr<Background>> getBackgrounds() const;
-        const std::shared_ptr<Background> const getBackground(unsigned int index) const;
+        const std::shared_ptr<Background> getBackground(unsigned int index) const;
     private:
         std::vector<std::shared_ptr<Background>> _backgrounds;
     };

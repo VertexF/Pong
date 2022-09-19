@@ -2,6 +2,11 @@
 #include "Game2D.h"
 
 #include "Global.h"
+#include "World.h"
+#include "Episode.h"
+
+#include "LevelGenerator.h"
+#include "TestLevelGenerator.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
@@ -17,14 +22,20 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
-        //_frameCount = 0;
     }
 
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-        _levelTheme = RESOURCE_MANAGER.getLevelTheme("smb3_dead_grass_theme");
-        _frameCount = 0;
+
+        std::unique_ptr<TestLevelGenerator> generators = std::make_unique<TestLevelGenerator>();
+        const std::vector<std::shared_ptr<LevelTheme>> themes = RESOURCE_MANAGER.getLevelThemes();
+
+        std::shared_ptr<Level> currentLevel = generators->generateLevel(0);
+        currentLevel->setTheme(themes.at(0));
+        GAME_SESSION.episode->addGameLevel(1, currentLevel);
+        GAME_SESSION.world->setLevel(currentLevel);
+
         _cameraController->setZoomLevel(4.5f);
     }
 
@@ -62,23 +73,25 @@ namespace game
             _posX += 1.5f * timeStep;
         }
 
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_SPACE)) 
+        {
+            std::unique_ptr<TestLevelGenerator> generators = std::make_unique<TestLevelGenerator>();
+
+            std::shared_ptr<Level> currentLevel = generators->generateLevel(0);
+            currentLevel->setTheme(RESOURCE_MANAGER.getLevelTheme("smb3_dead_grass_theme"));
+            GAME_SESSION.episode->addGameLevel(2, currentLevel);
+            GAME_SESSION.world->setLevel(currentLevel);
+        }
+
         _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
 
         Tempest::Renderer2D::resetStats();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
 
-        Tempest::Renderer2D::drawQuad({ 0, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
-        Tempest::Renderer2D::drawQuad({ 16, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
-        Tempest::Renderer2D::drawQuad({ 32, 0 }, { 16, 9 }, _levelTheme->getBackground(0)->getAnimation()->getFrame(_frameCount));
+        GAME_SESSION.world->render();
 
         Tempest::Renderer2D::endScene();
-
-        if (_frameCount >= _levelTheme->getBackground(0)->getAnimation()->getTotalFrames()) 
-        {
-            _frameCount = 0;
-        }
-        _frameCount++;
     }
 
     void Game2D::onEvent(Tempest::Event& e)

@@ -36,7 +36,7 @@ namespace game
         std::shared_ptr<ResourceManager::Resource> resource = getResource(name);
         if (resource == nullptr || resource->type != RESOURCE_BACKGROUND)
         {
-            TEMPEST_INFO("Warning resource not found {0} is return a nullptr", name);
+            TEMPEST_ERROR("Resource not found {0} is return a nullptr", name);
             return nullptr;
         }
         return resource->background;
@@ -47,7 +47,7 @@ namespace game
         std::shared_ptr<ResourceManager::Resource> resource = getResource(name);
         if (resource == nullptr || resource->type != RESOURCE_LEVELTHEME)
         {
-            TEMPEST_INFO("Warning resource not found {0} is return a nullptr", name);
+            TEMPEST_ERROR("Resource not found {0} is return a nullptr", name);
             return nullptr;
         }
         return resource->levelTheme;
@@ -63,7 +63,7 @@ namespace game
         auto it = _groups.find(name);
         if(it == _groups.end())
         {
-            TEMPEST_INFO("Warning resource group {0} is not found.", name);
+            TEMPEST_ERROR("Resource group {0} is not found.", name);
             return nullptr;
         }
         return std::make_shared<ResourceManager>(it->second);
@@ -181,6 +181,7 @@ namespace game
             {
                 background->addFrame(texture, { 0, 0 }, { texture->getWidth(), texture->getHeight() }, { 1, 1 }, time);
             }
+            background->setTiling(tiling);
 
             std::shared_ptr<Resource> resource = std::make_shared<Resource>();
             resource->type = RESOURCE_BACKGROUND;
