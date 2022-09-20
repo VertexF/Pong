@@ -53,6 +53,17 @@ namespace game
         return resource->levelTheme;
     }
 
+    const std::shared_ptr<Animation> ResourceManager::getAnimation(const std::string& name) const
+    {
+        std::shared_ptr<ResourceManager::Resource> resource = getResource(name);
+        if (resource == nullptr || resource->type != RESOURCE_ANIMATION)
+        {
+            TEMPEST_ERROR("Resource not found {0} is return a nullptr", name);
+            return nullptr;
+        }
+        return resource->animation;
+    }
+
     const std::vector<std::shared_ptr<LevelTheme>> ResourceManager::getLevelThemes() const 
     {
         return _levelTheme;

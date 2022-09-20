@@ -8,6 +8,7 @@
 
 #include "Background.h"
 #include "LevelTheme.h"
+#include "Animation.h"
 
 namespace game 
 {
@@ -21,6 +22,7 @@ namespace game
 
         const std::shared_ptr<Background> getBackground(const std::string& name) const;
         const std::shared_ptr<LevelTheme> getLevelTheme(const std::string& name) const;
+        const std::shared_ptr<Animation> getAnimation(const std::string& name) const;
         const std::vector<std::shared_ptr<LevelTheme>> getLevelThemes() const;
         const std::shared_ptr<ResourceManager> getResourceGroup(const std::string& name) const;
         void loadResources(const std::string& resourceFileName);
@@ -32,7 +34,8 @@ namespace game
         enum ResourceType
         {
             RESOURCE_BACKGROUND,
-            RESOURCE_LEVELTHEME
+            RESOURCE_LEVELTHEME,
+            RESOURCE_ANIMATION
         };
 
         struct Resource
@@ -41,10 +44,11 @@ namespace game
 
             std::shared_ptr<Background> background;
             std::shared_ptr<LevelTheme> levelTheme;
+            std::shared_ptr<Animation> animation;
         };
 
         bool _isMainResourceManager;
-
+        
         //COMPILATION ISSUE! UNIONS paired with shared_ptrs aren't playing nice.
         std::map<std::string, std::shared_ptr<Resource>> _resources;
 

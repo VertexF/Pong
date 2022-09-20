@@ -2,45 +2,12 @@
 #define ENTITY_HDR
 
 #include <memory>
+#include <string>
 
 #include <Tempest.h>
 
 #include "Animation.h"
-
-//double Entity::getBottom() const
-//{
-//    return getY();
-//}
-//
-//double Entity::getCenterX() const
-//{
-//    return getX() + getWidth() / 2.0;
-//}
-//
-//double Entity::getCenterY() const
-//{
-//    return getY() + getHeight() / 2.0;
-//}
-//
-//double Entity::getLeft() const
-//{
-//    return getX();
-//}
-//
-//const ResourceManager* Entity::getResourceManager() const
-//{
-//    return resourceManager;
-//}
-//
-//double Entity::getRight() const
-//{
-//    return getX() + getWidth();
-//}
-//
-//double Entity::getTop() const
-//{
-//    return getY() + getHeight();
-//}
+#include "global.h"
 
 namespace game
 {
@@ -64,7 +31,11 @@ namespace game
     protected:
         glm::f64vec2 _size;
     private:
+
+        std::shared_ptr<Animation> getAnimation(const std::string& name) const;
+
         std::shared_ptr<Animation> _animation;
+        std::shared_ptr<ResourceManager> _defaultResourceManager;
     };
 }
 
