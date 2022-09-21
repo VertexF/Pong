@@ -17,12 +17,19 @@ namespace game
         void setLevel(const std::shared_ptr<Level>& newLevel);
 
         void render();
+        void onUpdate(Tempest::TimeStep timeStep);
+
+        int getFrameCount() const;
+        Tempest::TimeStep getDelta() const;
+
     private:
         void unloadLevel();
         void loadLevel(const std::shared_ptr<Level>& newLevel);
 
         std::shared_ptr<Background> _background;
+
         int _frameCount;
+        Tempest::TimeStep _timeStep;
 
         int _levelWidth;
         int _levelHeight;

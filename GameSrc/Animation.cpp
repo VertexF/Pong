@@ -42,6 +42,8 @@ namespace game
 
     const Tempest::ref<Tempest::SubTexture2D> Animation::getFrameBySequence(unsigned int sequence) const
     {
-        return _frames[sequence];
+        //TODO: When your brain isn't fucked check this is same as the one in mario port.
+        int index = static_cast<int>(sequence / _duration);
+        return _frames[index];
     }
 }

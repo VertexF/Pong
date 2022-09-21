@@ -48,14 +48,6 @@ namespace game
                 }
                 break;
             }
-
-            //Is this what we want for backgrounds?
-            //Consider the fact we might need to keep track of different things for different backgrounds.
-            if (_frameCount >= _background->getAnimation()->getTotalFrames())
-            {
-                _frameCount = 0;
-            }
-            _frameCount++;
         }
     }
 
@@ -72,5 +64,28 @@ namespace game
         _levelHeight = newLevel->getHeight();
 
         _frameCount = 0;
+    }
+
+    void World::onUpdate(Tempest::TimeStep timeStep)
+    {
+        _timeStep = timeStep;
+
+        //Is this what we want for backgrounds?
+        //Consider the fact we might need to keep track of different things for different backgrounds.
+        if (_frameCount >= _background->getAnimation()->getTotalFrames())
+        {
+            _frameCount = 0;
+        }
+        _frameCount++;
+    }
+
+    int World::getFrameCount() const
+    {
+        return _frameCount;
+    }
+
+    Tempest::TimeStep World::getDelta() const 
+    {
+        return _timeStep;
     }
 }

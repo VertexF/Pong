@@ -49,6 +49,7 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->onUpdate(timeStep);
+        GAME_SESSION.world->onUpdate(timeStep);
 
         Tempest::RendererCommands::setClearColour({ 0.4f, 0.4f, 0.4f, 1.f });
         Tempest::RendererCommands::clear();

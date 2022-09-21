@@ -12,8 +12,8 @@ namespace game
     public:
         virtual ~Tile() = default;
 
-        double getWidth() const { _size.x; }
-        double getHeight() const { _size.y; }
+        double getWidth() const { size.x; }
+        double getHeight() const { size.y; }
     };
 }
 
