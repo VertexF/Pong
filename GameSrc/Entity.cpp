@@ -1,19 +1,5 @@
 #include "Entity.h"
 
-//layer(0),
-//activeAnimation(nullptr),
-//queuedAnimation(nullptr),
-//playingAnimation(false),
-//startedPlayingAnimation(false),
-//horizontalOrientation(false),
-//verticalOrientation(true),
-//animationPaused(false),
-//alpha(1.0f),
-//redMask(1.0f),
-//greenMask(1.0f),
-//blueMask(1.0f),
-//world(nullptr)
-
 namespace game
 {
     Entity::Entity() : 
@@ -21,7 +7,7 @@ namespace game
         _animationPaused(false), _startedPlayingAnimation(false), _playingAnimation(false),
          _horizontalOrientation(false), _verticalOrientation(true)
     {
-        _defaultResourceManager = DEFAULT_RESOURCE_GROUP;
+        _resourceManager = DEFAULT_RESOURCE_GROUP;
     }
 
     const std::shared_ptr<Animation> Entity::getActiveAnimation() const
@@ -57,7 +43,7 @@ namespace game
                     _playingAnimation = false;
                     _startedPlayingAnimation = false;
 
-                    //onAnimationEnd();
+                    onPlayAnimationEnd();
                 }
                 else 
                 {
@@ -85,15 +71,88 @@ namespace game
 
     const std::shared_ptr<Animation> Entity::getAnimation(const std::string& name) const
     {
-        return _defaultResourceManager->getAnimation(name);
+        return _resourceManager->getAnimation(name);
     }
 
     double Entity::getAge() const 
     {
-        if (_world == nullptr) 
-        {
-            return 0.0;
-        }
-        return static_cast<double>(_world->getFrameCount() - _firstFrame) * _world->getDelta();
+        return static_cast<double>(GAME_SESSION.world->getFrameCount() - _firstFrame) * GAME_SESSION.world->getDelta();
     }
+
+    const std::shared_ptr<ResourceManager> Entity::getResourceManager() const 
+    {
+        return _resourceManager;
+    }
+
+    void Entity::setOrientation(Direction direction) 
+    {
+        switch (direction) 
+        {
+        case Direction::UP:
+            _verticalOrientation = true;
+            break;
+        case Direction::DOWN:
+            _verticalOrientation = false;
+            break;
+        case Direction::LEFT:
+            _horizontalOrientation = false;
+            break;
+        case Direction::RIGHT:
+            _horizontalOrientation = true;
+            break;
+        }
+    }
+
+    void Entity::pausedAnimation(bool paused, int pauseFrame)
+    {
+        _pausedFrame = paused;
+        _pausedFrame = pauseFrame;
+    }
+
+    void Entity::playAnimation(const std::shared_ptr<Animation>& animation, const std::shared_ptr<Animation>& newAnimation) 
+    {
+        //Queue the current animation to play after this animation plays.
+        if (newAnimation != nullptr)
+        {
+            _queuedAnimation = newAnimation;
+        }
+        else 
+        {
+            _queuedAnimation = _activeAnimation;
+        }
+        _playingAnimation = true;
+        _activeAnimation = animation;
+    }
+
+    void Entity::playAnimation(const std::string& name)
+    {
+        playAnimation(getAnimation(name));
+    }
+
+    void Entity::playAnimation(const std::string& name, const std::string& nextAnimation)
+    {
+        playAnimation(getAnimation(name), getAnimation(nextAnimation));
+    }
+
+    void Entity::setAnimation(const std::shared_ptr<Animation>& animation)
+    {
+        //Queue the animation until the current one is done playing
+        if (_playingAnimation)
+        {
+            _queuedAnimation = animation;
+        }
+        else 
+        {
+            _activeAnimation = animation;
+        }
+
+        //Also unpaused the animation if we are setting a new one.
+        //setAnimationPaused(false);
+    }
+
+    void Entity::setAnimation(const std::string& name)
+    {
+        setAnimation(getAnimation(name));
+    }
+    
 }
