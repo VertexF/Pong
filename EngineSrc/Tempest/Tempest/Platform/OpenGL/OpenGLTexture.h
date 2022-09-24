@@ -5,6 +5,7 @@
 #include "Tempest/Renderer/Texture.h"
 
 #include <gl/glew.h>
+#include <stb_image.h>
 
 namespace Tempest 
 {
@@ -21,6 +22,8 @@ namespace Tempest
 
         virtual uint32_t getRendererID() const override;
 
+        virtual void saveData(const std::string& path) override;
+        virtual stbi_uc* getData() const override;
         virtual void setData(void* data, uint32_t size) override;
 
         virtual void bind(uint32_t slot = 0) const override;
@@ -37,6 +40,8 @@ namespace Tempest
 
         GLenum _internalFormat;
         GLenum _dataFormat;
+
+        stbi_uc* _imageData;
     };
 }
 

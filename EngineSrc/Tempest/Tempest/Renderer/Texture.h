@@ -2,6 +2,9 @@
 #define TEXTURE_HDR
 
 #include "PreComp.h"
+
+#include <stb_image.h>
+
 #include "Tempest/Core/Core.h"
 
 namespace Tempest 
@@ -16,6 +19,8 @@ namespace Tempest
 
         virtual uint32_t getRendererID() const = 0;
 
+        virtual void saveData(const std::string& path) = 0;
+        virtual stbi_uc* getData() const = 0;
         virtual void setData(void* data, uint32_t size) = 0;
 
         virtual void bind(uint32_t slot = 0) const = 0;

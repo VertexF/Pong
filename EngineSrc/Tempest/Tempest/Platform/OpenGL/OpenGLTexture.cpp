@@ -1,13 +1,10 @@
 #include "PreComp.h"
 #include "OpenGLTexture.h"
 
-
-#include <stb_image.h>
-
 namespace Tempest 
 {
     OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, uint32_t channels)
-        : _width(width), _height(height)
+        : _width(width), _height(height), _imageData(nullptr)
     {
         TEMPEST_PROFILE_FUNCTION();
 
@@ -46,7 +43,7 @@ namespace Tempest
     }
 
     OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-        : _width(width), _height(height)
+        : _width(width), _height(height), _imageData(nullptr)
     {
         TEMPEST_PROFILE_FUNCTION();
         _internalFormat = GL_RGBA8;
@@ -63,18 +60,17 @@ namespace Tempest
     }
 
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path) :
-        _path(path)
+        _path(path), _imageData(nullptr)
     {
         TEMPEST_PROFILE_FUNCTION();
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
-        stbi_uc* imageData;
         {
             TEMPEST_PROFILE_SCOPE("OpenGLTexture2D::OpenGLTexture2D(const std::string&) - stbi_load");
-            imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
+            _imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
         }
 
-        TEMPEST_CORE_ASSERT(imageData != nullptr, "Image could not be found or loaded!");
+        TEMPEST_CORE_ASSERT(_imageData != nullptr, "Image could not be found or loaded!");
 
         _width = width;
         _height = height;
@@ -104,14 +100,18 @@ namespace Tempest
         glTextureParameteri(_textureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(_textureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTextureSubImage2D(_textureID, 0, 0, 0, _width, _height, _dataFormat, GL_UNSIGNED_BYTE, imageData);
+        glTextureSubImage2D(_textureID, 0, 0, 0, _width, _height, _dataFormat, GL_UNSIGNED_BYTE, _imageData);
 
-        stbi_image_free(imageData);
+        stbi_image_free(_imageData);
     }
 
     OpenGLTexture2D::~OpenGLTexture2D() 
     {
         TEMPEST_PROFILE_FUNCTION();
+        if (_imageData != nullptr)
+        {
+            stbi_image_free(_imageData);
+        }
         glDeleteTextures(1, &_textureID);
     }
 
@@ -144,6 +144,45 @@ namespace Tempest
         }
 
         glTextureSubImage2D(_textureID, 0, 0, 0, _width, _height, _dataFormat, GL_UNSIGNED_BYTE, data);
+    }
+
+    void OpenGLTexture2D::saveData(const std::string& path) 
+    {
+        TEMPEST_CORE_ASSERT(_imageData == nullptr, "You cannot overwrite texture data that already exists.");
+
+        TEMPEST_PROFILE_FUNCTION();
+        int width, height, channels;
+        stbi_set_flip_vertically_on_load(1);
+        {
+            TEMPEST_PROFILE_SCOPE("OpenGLTexture2D::OpenGLTexture2D(const std::string&) - stbi_load");
+            _imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        }
+
+        _width = width;
+        _height = height;
+
+        GLenum internalFormat = 0;
+        GLenum dataFormat = 0;
+        if (channels == 4)
+        {
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
+        }
+        else if (channels == 3)
+        {
+            internalFormat = GL_RGB8;
+            dataFormat = GL_RGB;
+        }
+
+        _internalFormat = internalFormat;
+        _dataFormat = dataFormat;
+    }
+
+    stbi_uc* OpenGLTexture2D::getData() const 
+    {
+        TEMPEST_PROFILE_FUNCTION();
+        TEMPEST_CORE_ASSERT(_imageData != nullptr, "There is no data to return!");
+        return _imageData;
     }
 
     void OpenGLTexture2D::bind(uint32_t slot) const 

@@ -11,7 +11,7 @@ namespace Tempest
     class SubTexture2D 
     {
     public:
-        SubTexture2D(const ref<Texture2D> &texture, const glm::vec2& minBound, const glm::vec2& maxBound);
+        SubTexture2D(const ref<Texture2D>& texture, const glm::vec2& minBound, const glm::vec2& maxBound);
         SubTexture2D(const ref<Texture2D>& texture, const glm::vec4& coords);
 
         const ref<Texture2D> getTexture() const { return _texture; }
