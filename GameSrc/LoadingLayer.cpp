@@ -25,6 +25,7 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->setZoomLevel(5.f);
+        _texture = Tempest::Texture2D::create("Assets/Textures/testPixels.png");
     }
 
     void LoadingLayer::onDetach()

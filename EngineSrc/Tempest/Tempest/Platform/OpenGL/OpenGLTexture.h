@@ -25,6 +25,11 @@ namespace Tempest
         virtual void saveData(const std::string& path) override;
         virtual stbi_uc* getData() const override;
         virtual void setData(void* data, uint32_t size) override;
+        bool isTransparent(int width, int height) const;
+        bool isTransparent(int width, int height, stbi_uc* imageData) const;
+        bool isTransparent(int x, int y, int width, int height) const;
+        bool isTransparent(int x, int y, int width, int height, stbi_uc* imageData) const;
+        stbi_uc* getDataSection(int x, int y, int width, int height);
 
         virtual void bind(uint32_t slot = 0) const override;
         virtual void unbind(uint32_t slot = 0) const override;
