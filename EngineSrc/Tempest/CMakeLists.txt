@@ -12,10 +12,16 @@ if(MSVC)
     set(GML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/glm")
     set(STB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/stb")
     set(OPENAL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/openal-soft-1.21.1/include")
+	set(IL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/include")
     #I need to uses a config file that is generated here. So it's not a 
     #mistake it's a binrary directory.
     set(SNDFILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/EngineSrc/Tempest/vender/libsndfile-1.0.31/include")
     source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TEMPEST_SOURCE})
+	
+	###############Pre-built library#####################
+	set(IL_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/DevIL.lib")
+	set(ILU_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILU.lib")
+	set(ILUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILUT.lib")
 endif()
 
 add_subdirectory(vender/glew-2.1.0)
@@ -43,5 +49,5 @@ add_compile_definitions("$<$<CONFIG:Debug>:TEMPEST_DEBUG>")
 set(PRECOMPILED_HEADER Tempest/PublicInclude)
 target_precompile_headers(Tempest PUBLIC "${PRECOMPILED_HEADER}/PreComp.h")
 
-target_include_directories(Tempest PUBLIC ${PROJECT_BINARY_DIR}/src/Tempest ${SPDLOG_INCLUDE_DIR} ${PRECOMPILED_HEADER} ${IMGUI_INCLUDE_DIR} ${GML_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${STB_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR} ${RAPID_XML_DIR})
-target_link_libraries(Tempest PRIVATE IMGUI GLEW GLFW SPDLOG STB OPENAL SNDFILE)
+target_include_directories(Tempest PUBLIC ${PROJECT_BINARY_DIR}/src/Tempest ${SPDLOG_INCLUDE_DIR} ${PRECOMPILED_HEADER} ${IMGUI_INCLUDE_DIR} ${GML_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${STB_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR} ${RAPID_XML_DIR} ${IL_INCLUDE_DIR})
+target_link_libraries(Tempest PRIVATE IMGUI GLEW GLFW SPDLOG STB OPENAL SNDFILE ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES})

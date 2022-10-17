@@ -13,6 +13,9 @@
 #include <cmath>
 #include <vector>
 
+#include <IL/il.h>
+#include <IL/ilu.h>
+
 namespace game
 {
     Game2D::Game2D() : Layer("Game")
@@ -22,6 +25,16 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
+
+        bool loadSuccess = false;
+
+        //This will generate the ID we need for that image.
+        ILuint imgID = 0;
+        ilGenImages(1, &imgID);
+        ilBindImage(imgID);
+
+        //Here we load the image and check if it worked.
+        //ILboolean success = ilLoadImage(filePath.c_str());
     }
 
     void Game2D::onAttach()
