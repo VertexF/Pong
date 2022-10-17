@@ -13,7 +13,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -23,7 +22,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -34,11 +32,6 @@
 *.cbp
 *.layout
 *.depend
-
-# This skips all the linker stuff
-External/
-res/
-bin/
 
 #Main build ignore
 VS/
