@@ -12,16 +12,16 @@ if(MSVC)
     set(GML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/glm")
     set(STB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/stb")
     set(OPENAL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/openal-soft-1.21.1/include")
-	set(IL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/include")
+    set(IL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/include")
     #I need to uses a config file that is generated here. So it's not a 
     #mistake it's a binrary directory.
     set(SNDFILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/EngineSrc/Tempest/vender/libsndfile-1.0.31/include")
     source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TEMPEST_SOURCE})
-	
-	###############Pre-built library#####################
-	set(IL_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/DevIL.lib")
-	set(ILU_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILU.lib")
-	set(ILUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILUT.lib")
+    
+    ###############Pre-built library#####################
+    set(IL_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/DevIL.lib")
+    set(ILU_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILU.lib")
+    set(ILUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vender/DevIL Windows SDK/lib/x64/Release/ILUT.lib")
 endif()
 
 add_subdirectory(vender/glew-2.1.0)
