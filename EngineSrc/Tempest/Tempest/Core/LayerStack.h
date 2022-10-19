@@ -34,7 +34,7 @@ namespace Tempest
         Layer* back();
     private:
         std::vector<Layer*> _layers;
-        unsigned int _layerIteratorIndex = 0;
+        uint32_t _layerIteratorIndex = 0;
     };
 }
 

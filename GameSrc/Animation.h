@@ -15,8 +15,8 @@ namespace game
         void appendFrame(const Tempest::ref<Tempest::Texture2D>& texture, const glm::vec2& coords, const glm::vec2& cellSize, const glm::vec2& spriteSize = { 1, 1 }, int duration = 1);
         void appendFrame(const Tempest::ref<Tempest::Texture2D>& texture, const glm::vec4& coords, int duration = 1);
 
-        const Tempest::ref<Tempest::SubTexture2D> getFrame(unsigned int frameNumber);
-        const Tempest::ref<Tempest::SubTexture2D> getFrameBySequence(unsigned int sequence) const;
+        const Tempest::ref<Tempest::SubTexture2D> getFrame(uint32_t frameNumber);
+        const Tempest::ref<Tempest::SubTexture2D> getFrameBySequence(uint32_t sequence) const;
 
         size_t getTotalFrames() const { return _frames.size() * _duration; }
     private:

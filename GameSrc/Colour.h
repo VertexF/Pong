@@ -29,7 +29,7 @@ namespace game
         };
 
         unsigned char r;
-        unsigned char a;
+        unsigned char g;
         unsigned char b;
         unsigned char a;
 

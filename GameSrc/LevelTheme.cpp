@@ -27,7 +27,7 @@ namespace game
         return _backgrounds;
     }
 
-    const std::shared_ptr<Background> const LevelTheme::getBackground(unsigned int index) const
+    const std::shared_ptr<Background> const LevelTheme::getBackground(uint32_t index) const
     {
         if ((_backgrounds.size() - 1) < index)
         {

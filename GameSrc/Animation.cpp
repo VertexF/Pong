@@ -23,7 +23,7 @@ namespace game
         _duration = duration;
     }
 
-    const Tempest::ref<Tempest::SubTexture2D> Animation::getFrame(unsigned int frameNumber)
+    const Tempest::ref<Tempest::SubTexture2D> Animation::getFrame(uint32_t frameNumber)
     {
         if (_duration > 1)
         {
@@ -40,7 +40,7 @@ namespace game
         }
     }
 
-    const Tempest::ref<Tempest::SubTexture2D> Animation::getFrameBySequence(unsigned int sequence) const
+    const Tempest::ref<Tempest::SubTexture2D> Animation::getFrameBySequence(uint32_t sequence) const
     {
         //TODO: When your brain isn't fucked check this is same as the one in mario port.
         int index = static_cast<int>(sequence / _duration);

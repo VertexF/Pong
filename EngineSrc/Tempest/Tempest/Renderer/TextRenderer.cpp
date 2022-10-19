@@ -7,7 +7,7 @@
 namespace
 {
     //These contain the size of the index buffers.
-    const unsigned int ASCII_BUFFER = 96;
+    const uint32_t ASCII_BUFFER = 96;
 }
 
 namespace Tempest 
@@ -94,7 +94,7 @@ namespace Tempest
         const int pixelsBufferSize = _textureSize * _textureSize * sizeof(uint32_t);
         uint32_t* pixels = new uint32_t[pixelsBufferSize];
 
-        for (unsigned int i = 0; i < _textureSize * _textureSize; ++i)
+        for (uint32_t i = 0; i < _textureSize * _textureSize; ++i)
         {
             pixels[i] = bitmap[i];
             pixels[i] = pixels[i] << 24;
