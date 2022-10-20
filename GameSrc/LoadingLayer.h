@@ -30,8 +30,6 @@ namespace game
         float _posX;
         float _posY;
 
-        Tempest::ref<Tempest::Texture2D> _texture;
-
         bool finished = false;
     };
 }

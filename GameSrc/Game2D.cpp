@@ -2,19 +2,11 @@
 #include "Game2D.h"
 
 #include "Global.h"
-#include "World.h"
-#include "Episode.h"
-
-#include "LevelGenerator.h"
-#include "TestLevelGenerator.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 #include <cmath>
 #include <vector>
-
-#include <IL/il.h>
-#include <IL/ilu.h>
 
 namespace game
 {
@@ -25,29 +17,11 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
-
-        bool loadSuccess = false;
-
-        //This will generate the ID we need for that image.
-        ILuint imgID = 0;
-        ilGenImages(1, &imgID);
-        ilBindImage(imgID);
-
-        //Here we load the image and check if it worked.
-        //ILboolean success = ilLoadImage(filePath.c_str());
     }
 
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        std::unique_ptr<TestLevelGenerator> generators = std::make_unique<TestLevelGenerator>();
-        const std::vector<std::shared_ptr<LevelTheme>> themes = RESOURCE_MANAGER.getLevelThemes();
-
-        std::shared_ptr<Level> currentLevel = generators->generateLevel(0);
-        currentLevel->setTheme(themes.at(0));
-        GAME_SESSION.episode->addGameLevel(1, currentLevel);
-        GAME_SESSION.world->setLevel(currentLevel);
 
         _cameraController->setZoomLevel(4.5f);
     }
@@ -62,7 +36,6 @@ namespace game
         TEMPEST_PROFILE_FUNCTION();
 
         _cameraController->onUpdate(timeStep);
-        GAME_SESSION.world->onUpdate(timeStep);
 
         Tempest::RendererCommands::setClearColour({ 0.4f, 0.4f, 0.4f, 1.f });
         Tempest::RendererCommands::clear();
@@ -87,23 +60,11 @@ namespace game
             _posX += 1.5f * timeStep;
         }
 
-        if (Tempest::Input::isKeyPressed(TEMP_KEY_SPACE)) 
-        {
-            std::unique_ptr<TestLevelGenerator> generators = std::make_unique<TestLevelGenerator>();
-
-            std::shared_ptr<Level> currentLevel = generators->generateLevel(0);
-            currentLevel->setTheme(RESOURCE_MANAGER.getLevelTheme("smb3_dead_grass_theme"));
-            GAME_SESSION.episode->addGameLevel(2, currentLevel);
-            GAME_SESSION.world->setLevel(currentLevel);
-        }
-
         _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
 
         Tempest::Renderer2D::resetStats();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
-
-        GAME_SESSION.world->render();
 
         Tempest::Renderer2D::endScene();
     }
