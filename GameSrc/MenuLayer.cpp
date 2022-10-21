@@ -1,5 +1,5 @@
 #include "PreComp.h"
-#include "LoadingLayer.h"
+#include "MenuLayer.h"
 
 #include "Global.h"
 
@@ -9,7 +9,7 @@
 
 namespace game
 {
-    LoadingLayer::LoadingLayer() : Layer("Loading")
+    MenuLayer::MenuLayer() : Layer("Menu")
     {
         TEMPEST_PROFILE_FUNCTION();
         _cameraController = std::make_unique<Tempest::OrthographicalCameraController>(1280.f / 720.f);
@@ -20,21 +20,19 @@ namespace game
         finished = false;
     }
 
-    void LoadingLayer::onAttach()
+    void MenuLayer::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-
-        RESOURCE_MANAGER.loadFile();
 
         _cameraController->setZoomLevel(5.f);
     }
 
-    void LoadingLayer::onDetach()
+    void MenuLayer::onDetach()
     {
         TEMPEST_PROFILE_FUNCTION();
     }
 
-    void LoadingLayer::onUpdate(Tempest::TimeStep timeStep)
+    void MenuLayer::onUpdate(Tempest::TimeStep timeStep)
     {
         TEMPEST_PROFILE_FUNCTION();
 
@@ -42,26 +40,6 @@ namespace game
 
         Tempest::RendererCommands::setClearColour({ 0.9f, 0.9f, 0.2f, 1.f });
         Tempest::RendererCommands::clear();
-
-        if (Tempest::Input::isKeyPressed(TEMP_KEY_W)) 
-        {
-            _posY += 1.5f * timeStep;
-        }
-
-        if (Tempest::Input::isKeyPressed(TEMP_KEY_S))
-        {
-            _posY -= 1.5f * timeStep;
-        }
-
-        if (Tempest::Input::isKeyPressed(TEMP_KEY_A))
-        {
-            _posX -= 1.5f * timeStep;
-        }
-
-        if (Tempest::Input::isKeyPressed(TEMP_KEY_D))
-        {
-            _posX += 1.5f * timeStep;
-        }
 
         if (Tempest::Input::isKeyPressed(TEMP_KEY_SPACE))
         {
@@ -78,31 +56,31 @@ namespace game
         finished = true;
     }
 
-    void LoadingLayer::onEvent(Tempest::Event& e)
+    void MenuLayer::onEvent(Tempest::Event& e)
     {
         _cameraController->onEvent(e);
 
         Tempest::EventDispatcher dispatcher(e);
-        dispatcher.dispatch<Tempest::PressedKeyEvent>(std::bind(&LoadingLayer::onKeyPressed, this, std::placeholders::_1));
-        dispatcher.dispatch<Tempest::ReleasedKeyEvent>(std::bind(&LoadingLayer::onKeyReleased, this, std::placeholders::_1));
+        dispatcher.dispatch<Tempest::PressedKeyEvent>(std::bind(&MenuLayer::onKeyPressed, this, std::placeholders::_1));
+        dispatcher.dispatch<Tempest::ReleasedKeyEvent>(std::bind(&MenuLayer::onKeyReleased, this, std::placeholders::_1));
     }
 
-    void LoadingLayer::onImGuiRender()
+    void MenuLayer::onImGuiRender()
     {
         TEMPEST_PROFILE_FUNCTION();
     }
 
-    bool LoadingLayer::isFinished() const
+    bool MenuLayer::isFinished() const
     {
         return finished;
     }
 
-    bool LoadingLayer::onKeyPressed(Tempest::PressedKeyEvent& e)
+    bool MenuLayer::onKeyPressed(Tempest::PressedKeyEvent& e)
     {
         return false;
     }
 
-    bool LoadingLayer::onKeyReleased(Tempest::ReleasedKeyEvent& e) 
+    bool MenuLayer::onKeyReleased(Tempest::ReleasedKeyEvent& e)
     {
         return false;
     }

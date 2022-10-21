@@ -5,6 +5,7 @@
 
 #include "Game2D.h"
 #include "LoadingLayer.h"
+#include "MenuLayer.h"
 
 namespace game
 {
@@ -18,6 +19,7 @@ namespace game
             //Instead of adding them all to the stack all at once, might save RAM and startup time.
             pushGameLayer(new Game2D());
             pushGameLayer(new LoadingLayer());
+            pushGameLayer(new MenuLayer());
         }
 
         virtual ~Game() = default;
