@@ -8,6 +8,8 @@
 #include <cmath>
 #include <vector>
 
+#include "Vechicle.h"
+
 namespace game
 {
     Game2D::Game2D() : Layer("Game")
@@ -17,12 +19,14 @@ namespace game
 
         _posX = 0.f;
         _posY = 0.f;
+
+        ENTITY_MANAGER.instantiate(EntityManager::EntityType::VECHICLE);
+        ENTITY_MANAGER.instantiate(EntityManager::EntityType::VECHICLE);
     }
 
     void Game2D::onAttach()
     {
         TEMPEST_PROFILE_FUNCTION();
-
         _cameraController->setZoomLevel(4.5f);
     }
 
@@ -60,11 +64,17 @@ namespace game
             _posX += 1.5f * timeStep;
         }
 
+        if (Tempest::Input::isKeyPressed(TEMP_KEY_SPACE)) 
+        {
+        }
+
         _cameraController->setCameraPosition({ _posX, _posY, 0.0f });
 
         Tempest::Renderer2D::resetStats();
 
         Tempest::Renderer2D::beginScene(_cameraController->getCamera());
+
+        ENTITY_MANAGER.get(0)->onUpdate(timeStep);
 
         Tempest::Renderer2D::endScene();
     }

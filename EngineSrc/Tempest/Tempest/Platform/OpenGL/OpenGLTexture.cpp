@@ -108,10 +108,6 @@ namespace Tempest
     OpenGLTexture2D::~OpenGLTexture2D() 
     {
         TEMPEST_PROFILE_FUNCTION();
-        if (_imageData != nullptr)
-        {
-            stbi_image_free(_imageData);
-        }
         glDeleteTextures(1, &_textureID);
     }
 
